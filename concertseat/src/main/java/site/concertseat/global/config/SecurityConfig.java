@@ -23,7 +23,6 @@ public class SecurityConfig {
     private final UserDetailsService userDetailsService;
 
     @Bean
-    @Profile("local")
     public SecurityFilterChain localFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
