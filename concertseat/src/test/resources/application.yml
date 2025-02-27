@@ -1,7 +1,9 @@
 spring:
-  config:
-    activate:
-      on-profile: local
+  profiles:
+    active: test
+
+  application:
+    name: concertseat
 
   datasource:
     driver-class-name: org.h2.Driver
