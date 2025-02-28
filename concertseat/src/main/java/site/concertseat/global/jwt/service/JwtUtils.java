@@ -93,8 +93,8 @@ public class JwtUtils {
                 .compact();
     }
 
-    public String getUuid(String token) {
-        return Jwts.parserBuilder().setSigningKey(accessKey).build()
+    public String getUuid(String token, boolean isAccess) {
+        return Jwts.parserBuilder().setSigningKey(isAccess ? accessKey : refreshKey).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -102,7 +102,7 @@ public class JwtUtils {
 
     public boolean validateToken(String token, boolean isAccess) {
         try {
-            if (isExpired(token)) {
+            if (isExpired(token, isAccess)) {
                 return false;
             }
 
@@ -117,8 +117,8 @@ public class JwtUtils {
         }
     }
 
-    private boolean isExpired(String token) {
-        Date expiration = Jwts.parserBuilder().setSigningKey(accessKey).build()
+    private boolean isExpired(String token, boolean isAccess) {
+        Date expiration = Jwts.parserBuilder().setSigningKey(isAccess ? accessKey : refreshKey).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getExpiration();
@@ -129,7 +129,7 @@ public class JwtUtils {
     public RefreshDto refresh(String token, String userAgent) {
         validateRefreshToken(token, userAgent);
 
-        String uuid = getUuid(token);
+        String uuid = getUuid(token, false);
 
         Member member = memberRepository.findByUuid(uuid)
                 .orElseThrow(() -> new CustomException(INVALID_TOKEN));
@@ -145,8 +145,10 @@ public class JwtUtils {
             throw new CustomException(INVALID_TOKEN);
         }
 
+        String uuid = getUuid(token, false);
+
         String deviceId = getDeviceIdFromUserAgent(userAgent);
-        String refreshToken = (String) redisUtils.getData("refresh:" + token + ":" + deviceId);
+        String refreshToken = (String) redisUtils.getData("refresh:" + uuid + ":" + deviceId);
 
         if (refreshToken == null || !refreshToken.equals(token)) {
             throw new CustomException(INVALID_TOKEN);
@@ -180,7 +182,7 @@ public class JwtUtils {
             return Jwts.parserBuilder().setSigningKey(refreshKey).build()
                     .parseClaimsJws(token)
                     .getBody()
-                    .get("Type")
+                    .get("type")
                     .equals(REFRESH_TOKEN_CLAIM_NAME);
         } catch (Exception e) {
             return false;
