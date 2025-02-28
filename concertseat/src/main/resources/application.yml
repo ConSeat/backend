@@ -6,3 +6,11 @@ spring:
 
   profiles:
     active: ${PROFILE}
+
+jwt:
+  access:
+    secret: ${JWT_ACCESS_SECRET}
+    expiration: ${JWT_ACCESS_EXPIRATION}
+  refresh:
+    secret: ${JWT_REFRESH_SECRET}
+    expiration: ${JWT_REFRESH_EXPIRATION}

@@ -34,10 +34,5 @@ spring:
     redis:
       repositories:
         enabled: false
-      host: localhost
-      port: 6379
-
-jwt:
-  secret: testSecretKey20240801testSecretKey20240801testSecretKey20240801
-  access_expiration: 3600
-  refresh_expiration: 604800
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
