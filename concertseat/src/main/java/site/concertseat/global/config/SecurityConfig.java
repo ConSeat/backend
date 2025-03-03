@@ -3,7 +3,6 @@ package site.concertseat.global.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,6 +13,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import site.concertseat.global.jwt.filter.JwtAuthenticationFilter;
 import site.concertseat.global.jwt.service.JwtUtils;
+import site.concertseat.global.oauth.CustomOAuth2UserService;
+import site.concertseat.global.oauth.Oauth2SuccessHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -21,6 +22,8 @@ import site.concertseat.global.jwt.service.JwtUtils;
 public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain localFilterChain(HttpSecurity http) throws Exception {
@@ -39,7 +42,16 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, userDetailsService),
-                        UsernamePasswordAuthenticationFilter.class);
+                        UsernamePasswordAuthenticationFilter.class)
+                .oauth2Login(oauth2Configurer -> oauth2Configurer
+                        .authorizationEndpoint(authEndPoint -> authEndPoint
+                                .baseUri("/api/auth/login"))
+                        .redirectionEndpoint(authEndPoint -> authEndPoint
+                                .baseUri("/api/auth/oauth2/*"))
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(oAuth2UserService))
+                        .successHandler(oauth2SuccessHandler)
+                );
 
         return http.build();
     }
