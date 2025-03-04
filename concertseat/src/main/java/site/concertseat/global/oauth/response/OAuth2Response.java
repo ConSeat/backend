@@ -5,7 +5,7 @@ import site.concertseat.domain.member.entity.Member;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import static site.concertseat.domain.member.entity.Role.ROLE_USER;
+import static site.concertseat.domain.member.enums.Role.ROLE_USER;
 
 public interface OAuth2Response {
     String getProvider();

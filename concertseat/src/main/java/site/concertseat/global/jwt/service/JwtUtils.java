@@ -10,7 +10,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.member.entity.Role;
+import site.concertseat.domain.member.enums.Role;
 import site.concertseat.domain.member.repository.MemberRepository;
 import site.concertseat.global.exception.CustomException;
 import site.concertseat.global.jwt.dto.RefreshDto;
