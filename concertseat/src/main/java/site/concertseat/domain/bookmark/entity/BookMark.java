@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.stadium.entity.Rows;
+import site.concertseat.domain.stadium.entity.Line;
 
 @Entity
 @Getter
@@ -23,7 +23,7 @@ public class BookMark {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId("rowsId")
-    @JoinColumn(name = "rows_id", columnDefinition = "SMALLINT", nullable = false)
-    private Rows rows;
+    @MapsId("lineId")
+    @JoinColumn(name = "line_id", columnDefinition = "SMALLINT", nullable = false)
+    private Line line;
 }

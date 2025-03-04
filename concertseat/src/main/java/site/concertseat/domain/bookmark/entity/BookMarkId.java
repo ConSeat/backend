@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class BookMarkId {
     private Long memberId;
 
-    private Integer rowsId;
+    private Integer lineId;
 }
