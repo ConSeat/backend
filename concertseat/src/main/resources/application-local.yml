@@ -3,12 +3,6 @@ spring:
     activate:
       on-profile: local
 
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:conseat;MODE=MYSQL
-    username: sa
-    password:
-
   h2:
     console:
       enabled: true
@@ -19,7 +13,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
@@ -28,7 +22,7 @@ spring:
   sql:
     init:
       mode: always
-      data-locations: classpath:sql/data.sql
+      data-locations: classpath:sql/data_${DB_TYPE}.sql
 
   data:
     redis:

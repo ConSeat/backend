@@ -7,6 +7,12 @@ spring:
   profiles:
     active: ${PROFILE}
 
+  datasource:
+    driver-class-name: ${DB_DRIVER}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+
   security:
     oauth2:
       client:

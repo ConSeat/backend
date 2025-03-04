@@ -1,0 +1,2 @@
+insert into member (member_id, uuid, social_id, nickname, src, role, provider_type, is_deleted, created_at, modified_at) values
+                                                                         (1, 'c2141f87-30d7-4d2e-a9ef-3eff99acd957', 'test@test.com', 'test_nickname','src', 'ROLE_ADMIN', 'kakao', false, current_timestamp, current_timestamp);

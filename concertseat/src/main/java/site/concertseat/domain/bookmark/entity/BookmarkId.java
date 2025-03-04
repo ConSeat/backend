@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class BookMarkId {
+public class BookmarkId {
     private Long memberId;
 
-    private Integer rowsId;
+    private Integer lineId;
 }
