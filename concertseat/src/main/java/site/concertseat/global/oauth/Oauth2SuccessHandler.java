@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import site.concertseat.domain.member.entity.Role;
+import site.concertseat.domain.member.enums.Role;
 import site.concertseat.global.jwt.service.JwtUtils;
 
 import java.io.IOException;

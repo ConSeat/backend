@@ -3,7 +3,7 @@ package site.concertseat.global.oauth;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.member.entity.Role;
+import site.concertseat.domain.member.enums.Role;
 
 import java.util.Collection;
 import java.util.Collections;

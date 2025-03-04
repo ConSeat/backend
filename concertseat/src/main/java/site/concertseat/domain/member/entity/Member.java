@@ -9,6 +9,7 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import site.concertseat.domain.member.enums.Role;
 import site.concertseat.global.entity.BaseEntity;
 
 @Entity

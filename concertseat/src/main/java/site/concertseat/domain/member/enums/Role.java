@@ -1,4 +1,4 @@
-package site.concertseat.domain.member.entity;
+package site.concertseat.domain.member.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 
