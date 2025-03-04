@@ -13,9 +13,9 @@ import site.concertseat.domain.stadium.entity.Line;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookMark {
+public class Bookmark {
     @EmbeddedId
-    private BookMarkId bookMarkId;
+    private BookmarkId bookmarkId;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @MapsId("memberId")
