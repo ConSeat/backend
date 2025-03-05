@@ -12,7 +12,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import site.concertseat.domain.concert.entity.Concert;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.enums.Distance;
-import site.concertseat.domain.stadium.entity.Line;
+import site.concertseat.domain.stadium.entity.Seating;
 import site.concertseat.global.entity.BaseEntity;
 
 @Entity
@@ -34,8 +34,8 @@ public class Review extends BaseEntity {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "rows_id", nullable = false)
-    private Line line;
+    @JoinColumn(name = "seating_id", nullable = false)
+    private Seating seating;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "concert_id", nullable = false)
