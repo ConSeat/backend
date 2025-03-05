@@ -3,9 +3,9 @@ package site.concertseat.domain.review.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -19,7 +19,7 @@ import site.concertseat.global.entity.BaseEntity;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @SQLDelete(sql = " UPDATE Review SET is_deleted = true WHERE review = ? ")
 @SQLRestriction("is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
