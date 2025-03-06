@@ -17,7 +17,7 @@ import static site.concertseat.global.statuscode.SuccessCode.OK;
 public class ReviewController {
     private final ReviewService reviewService;
 
-    @PostMapping("/seating/{seatingId}/concerts/{concertId}")
+    @PostMapping("/concerts/{concertId}/seating/{seatingId}")
     public ResponseDto<Void> reviewPost(@LoginMember Member member,
                                                  @PathVariable Integer seatingId,
                                                  @PathVariable Integer concertId,
