@@ -12,10 +12,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Line {
+public class Seating {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "line_id", columnDefinition = "SMALLINT")
+    @Column(name = "seating_id", columnDefinition = "SMALLINT")
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

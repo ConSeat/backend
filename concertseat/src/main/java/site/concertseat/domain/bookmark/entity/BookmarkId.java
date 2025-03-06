@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class BookmarkId {
     private Long memberId;
 
-    private Integer lineId;
+    private Integer seatingId;
 }

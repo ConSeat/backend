@@ -3,6 +3,7 @@ package site.concertseat.domain.member.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -16,7 +17,7 @@ import site.concertseat.global.entity.BaseEntity;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
+@Builder
 @SQLDelete(sql = " UPDATE Member SET is_deleted = true WHERE member_id = ? ")
 @SQLRestriction("is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
