@@ -60,4 +60,8 @@ public class Review extends BaseEntity {
     @NotNull
     @Enumerated
     private Distance screenDistance;
+
+    @NotNull
+    @Column
+    private Boolean isApproved;
 }

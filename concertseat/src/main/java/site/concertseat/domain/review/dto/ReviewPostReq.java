@@ -45,6 +45,7 @@ public class ReviewPostReq {
                 .stageDistance(Distance.valueOf(screenDistance.toUpperCase()))
                 .thrustStageDistance(Distance.valueOf(thrustStageDistance.toUpperCase()))
                 .screenDistance(Distance.valueOf(screenDistance.toUpperCase()))
+                .isApproved(false)
                 .build();
     }
 }
