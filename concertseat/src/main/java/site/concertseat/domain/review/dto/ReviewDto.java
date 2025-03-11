@@ -3,8 +3,8 @@ package site.concertseat.domain.review.dto;
 import lombok.Builder;
 import lombok.Data;
 import site.concertseat.domain.review.entity.Review;
+import site.concertseat.global.util.DateFormatter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -22,7 +22,7 @@ public class ReviewDto {
 
     private String contents;
 
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     private List<String> features;
 
@@ -44,7 +44,7 @@ public class ReviewDto {
                 .writerSrc(review.getMember().getSrc())
                 .concertName(review.getConcert().getName())
                 .contents(review.getContents())
-                .createdAt(review.getCreatedAt())
+                .createdAt(DateFormatter.calculateTime(review.getCreatedAt()))
                 .likesCount(likesCount)
                 .isLiked(false)
                 .isBookmarked(false)
