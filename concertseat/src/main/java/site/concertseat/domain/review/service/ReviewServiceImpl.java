@@ -38,7 +38,6 @@ public class ReviewServiceImpl implements ReviewService {
     private final SightRepository sightRepository;
     private final LikesRepository likesRepository;
     private final BookmarkRepository bookmarkRepository;
-    private final CacheService cacheService;
 
     @Override
     @Transactional
