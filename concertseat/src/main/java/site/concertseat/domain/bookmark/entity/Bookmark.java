@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.stadium.entity.Seating;
+import site.concertseat.domain.review.entity.Review;
 
 @Entity
 @Getter
@@ -23,7 +23,7 @@ public class Bookmark {
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @MapsId("seatingId")
-    @JoinColumn(name = "seating_id", columnDefinition = "SMALLINT", nullable = false)
-    private Seating seating;
+    @MapsId("reviewId")
+    @JoinColumn(name = "review_id", columnDefinition = "INT UNSIGNED", nullable = false)
+    private Review review;
 }
