@@ -16,7 +16,7 @@ public class Stadium {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "stadium_id", columnDefinition = "TINYINT")
-    private Long id;
+    private Integer id;
 
     @NotNull
     @Column(length = 30)
@@ -25,4 +25,8 @@ public class Stadium {
     @NotNull
     @Column
     private String image;
+
+    @NotNull
+    @Column
+    private Boolean isActive;
 }
