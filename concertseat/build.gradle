@@ -51,7 +51,7 @@ dependencies {
 
 openapi3 {
 	server = 'localhost:8080'
-	outputFileNamePrefix = 'consert-seat'
+	outputFileNamePrefix = 'concert-seat'
 	title = 'Con:Seat API Docs'
 	description = 'Con:Seat API description'
 	version = '0.1.0'

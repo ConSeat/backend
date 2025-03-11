@@ -16,6 +16,8 @@ import site.concertseat.global.jwt.service.JwtUtils;
 import site.concertseat.global.oauth.CustomOAuth2UserService;
 import site.concertseat.global.oauth.Oauth2SuccessHandler;
 
+import static org.springframework.http.HttpMethod.POST;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,7 +31,9 @@ public class SecurityConfig {
     public SecurityFilterChain localFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/api/auth/**", "/h2-console/**").permitAll()
+                        .requestMatchers(POST, "/api/reviews/concerts/{concertId}/seating/{seatingId}")
+                            .authenticated()
+                        .requestMatchers("/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers

@@ -1,13 +1,16 @@
 package site.concertseat.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.util.EnumUtils;
+import site.concertseat.domain.bookmark.entity.Bookmark;
+import site.concertseat.domain.bookmark.repository.BookmarkRepository;
 import site.concertseat.domain.concert.entity.Concert;
 import site.concertseat.domain.concert.repository.ConcertRepository;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.review.dto.ReviewPostReq;
+import site.concertseat.domain.review.dto.*;
 import site.concertseat.domain.review.entity.*;
 import site.concertseat.domain.review.enums.Distance;
 import site.concertseat.domain.review.repository.*;
@@ -16,6 +19,8 @@ import site.concertseat.domain.stadium.repository.SeatingRepository;
 import site.concertseat.global.exception.CustomException;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static site.concertseat.global.statuscode.ErrorCode.BAD_REQUEST;
 import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
@@ -30,6 +35,9 @@ public class ReviewServiceImpl implements ReviewService {
     private final ObstructionRepository obstructionRepository;
     private final FeatureRepository featureRepository;
     private final BatchRepository batchRepository;
+    private final SightRepository sightRepository;
+    private final LikesRepository likesRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Override
     @Transactional
@@ -115,5 +123,72 @@ public class ReviewServiceImpl implements ReviewService {
                 .toList();
 
         batchRepository.saveFeatures(reviewObstructions);
+    }
+
+    @Override
+    public ReviewSearchRes searchReview(Member member, Integer seatingId) {
+        ReviewStatsDto reviewStats = reviewRepository.findReviewStats(seatingId);
+
+        if (reviewStats.getReviewCount() == 0) {
+            throw new CustomException(NOT_FOUND);
+        }
+
+        List<ReviewWithLikesCount> reviewsWithLikesCount = reviewRepository
+                .findReviewsBySeatingId(seatingId, Pageable.ofSize(3));
+
+        List<Review> reviews = reviewsWithLikesCount.stream()
+                .map(ReviewWithLikesCount::getReview).toList();
+
+        ReviewSearchRes result = new ReviewSearchRes(reviewStats, reviewsWithLikesCount);
+
+        setImages(reviews, result);
+        setFeatures(reviews, result);
+        setObstructions(reviews, result);
+        setIsLikedAndIsBookmarked(member, reviews, result);
+
+        return result;
+    }
+
+    private void setImages(List<Review> reviews, ReviewSearchRes res) {
+        Map<Long, List<Sight>> sights = sightRepository.findByReviews(reviews)
+                .stream()
+                .collect(Collectors.groupingBy(sight -> sight.getReview().getId()));
+
+        res.setImages(sights);
+    }
+
+    private void setFeatures(List<Review> reviews, ReviewSearchRes res) {
+        Map<Long, List<ReviewFeature>> features = featureRepository.findReviewFeatures(reviews)
+                .stream()
+                .collect(Collectors.groupingBy(reviewFeature -> reviewFeature.getReview().getId()));
+
+        res.setFeatures(features);
+    }
+
+    private void setObstructions(List<Review> reviews, ReviewSearchRes res) {
+        Map<Long, List<ReviewObstruction>> obstructions = obstructionRepository.findReviewObstruction(reviews)
+                .stream()
+                .collect(Collectors.groupingBy(reviewObstruction -> reviewObstruction.getReview().getId()));
+
+        res.setObstructions(obstructions);
+    }
+
+    private void setIsLikedAndIsBookmarked(Member member, List<Review> reviews, ReviewSearchRes res) {
+        if (member == null) {
+            return;
+        }
+
+        Map<Long, List<Likes>> likes = likesRepository.findLikesByReviewsAndMemberId(reviews, member.getId())
+                .stream()
+                .collect(Collectors.groupingBy(like -> like.getReview().getId()));
+
+        Map<Long, List<Bookmark>> bookmarks = bookmarkRepository.findBookmarkByReviewsAndMemberId(reviews, member.getId())
+                .stream()
+                .collect(Collectors.groupingBy(bookmark -> bookmark.getReview().getId()));
+
+        for (ReviewDto review : res.getReviews()) {
+            review.setIsLiked(likes.get(review.getReviewId()) != null);
+            review.setIsBookmarked(bookmarks.get(review.getReviewId()) != null);
+        }
     }
 }
