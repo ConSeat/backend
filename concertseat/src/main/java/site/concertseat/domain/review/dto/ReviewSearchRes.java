@@ -13,13 +13,13 @@ public class ReviewSearchRes {
 
     private List<String> thumbnails = new ArrayList<>();
 
-    private Integer reviewCount;
+    private Long reviewCount;
 
     private List<ReviewDto> reviews;
 
-    public ReviewSearchRes(ReviewStatsDto reviewStatsDto, Integer reviewCount, List<ReviewWithLikesCount> reviews) {
-        this.distanceMessage = reviewStatsDto.getMessage();
-        this.reviewCount = reviewCount;
+    public ReviewSearchRes(ReviewStatsDto reviewStats, List<ReviewWithLikesCount> reviews) {
+        this.distanceMessage = reviewStats.getMessage();
+        this.reviewCount = reviewStats.getReviewCount();
         this.reviews = reviews.stream().map(ReviewDto::toDto).toList();
     }
 

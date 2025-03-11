@@ -128,11 +128,11 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewSearchRes searchReview(Member member, Integer seatingId) {
-        if (!seatingRepository.existsById(seatingId)) {
+        ReviewStatsDto reviewStats = reviewRepository.findReviewStats(seatingId);
+
+        if (reviewStats.getReviewCount() == 0) {
             throw new CustomException(NOT_FOUND);
         }
-
-        int reviewCount = cacheService.getReviewCount(seatingId);
 
         List<ReviewWithLikesCount> reviewsWithLikesCount = reviewRepository
                 .findReviewsBySeatingId(seatingId, Pageable.ofSize(3));
@@ -140,13 +140,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviews = reviewsWithLikesCount.stream()
                 .map(ReviewWithLikesCount::getReview).toList();
 
-        if (reviews.isEmpty()) {
-            throw new CustomException(NOT_FOUND);
-        }
-
-        ReviewStatsDto averageDistance = reviewRepository.findAverageDistance(seatingId);
-
-        ReviewSearchRes result = new ReviewSearchRes(averageDistance, reviewCount, reviewsWithLikesCount);
+        ReviewSearchRes result = new ReviewSearchRes(reviewStats, reviewsWithLikesCount);
 
         setImages(reviews, result);
         setFeatures(reviews, result);
@@ -186,10 +180,12 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         Map<Long, List<Likes>> likes = likesRepository.findLikesByReviewsAndMemberId(reviews, member.getId())
-                .stream().collect(Collectors.groupingBy(like -> like.getReview().getId()));
+                .stream()
+                .collect(Collectors.groupingBy(like -> like.getReview().getId()));
 
         Map<Long, List<Bookmark>> bookmarks = bookmarkRepository.findBookmarkByReviewsAndMemberId(reviews, member.getId())
-                .stream().collect(Collectors.groupingBy(bookmark -> bookmark.getReview().getId()));
+                .stream()
+                .collect(Collectors.groupingBy(bookmark -> bookmark.getReview().getId()));
 
         for (ReviewDto review : res.getReviews()) {
             review.setIsLiked(likes.get(review.getReviewId()) != null);

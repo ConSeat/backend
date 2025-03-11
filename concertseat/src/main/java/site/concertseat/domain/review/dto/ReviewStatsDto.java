@@ -34,22 +34,25 @@ public class ReviewStatsDto {
             "본무대, 돌출, 전광판 모두 멀거나 안 보여요"
     };
 
-    private int stageDistance;
+    private Integer stageDistance;
 
-    private int thrustStageDistance;
+    private Integer thrustStageDistance;
 
-    private int screenDistance;
+    private Integer screenDistance;
 
     private String message;
 
     private Long reviewCount;
 
     public ReviewStatsDto(Double stageDistance, Double thrustStageDistance, Double screenDistance, Long reviewCount) {
-        this.stageDistance = toInt(stageDistance);
-        this.thrustStageDistance = toInt(thrustStageDistance);
-        this.screenDistance = toInt(screenDistance);
-        this.message = messages[9 * this.stageDistance + 3 * this.thrustStageDistance + this.screenDistance];
         this.reviewCount = reviewCount;
+
+        if (reviewCount > 0) {
+            this.stageDistance = toInt(stageDistance);
+            this.thrustStageDistance = toInt(thrustStageDistance);
+            this.screenDistance = toInt(screenDistance);
+            this.message = messages[9 * this.stageDistance + 3 * this.thrustStageDistance + this.screenDistance];
+        }
     }
 
     private int toInt(double d) {

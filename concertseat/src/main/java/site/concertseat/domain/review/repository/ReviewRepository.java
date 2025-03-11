@@ -25,14 +25,14 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<ReviewWithLikesCount> findReviewsBySeatingId(@Param("seatingId") Integer seatingId, Pageable pageable);
 
     @Query("select new site.concertseat.domain.review.dto.ReviewStatsDto( " +
-            "avg(r.stageDistance), " +
-            "avg(r.thrustStageDistance), " +
-            "avg(r.screenDistance), " +
-            "count(r) ) " +
+            "   avg(r.stageDistance), " +
+            "   avg(r.thrustStageDistance), " +
+            "   avg(r.screenDistance), " +
+            "   count(r)) " +
             "from Review r " +
             "where r.seating.id = :seatingId " +
             "and r.isApproved = true")
-    ReviewStatsDto findAverageDistance(@Param("seatingId") Integer seatingId);
+    ReviewStatsDto findReviewStats(@Param("seatingId") Integer seatingId);
 
     @Query("select count(r) " +
             "from Review r " +
