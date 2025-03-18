@@ -1,9 +1,10 @@
 package site.concertseat.domain.stadium.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import site.concertseat.domain.concert.dto.ConcertSearchReq;
+import site.concertseat.domain.concert.dto.ConcertSearchRes;
+import site.concertseat.domain.concert.service.ConcertService;
 import site.concertseat.domain.stadium.dto.StadiumListRes;
 import site.concertseat.domain.stadium.service.StadiumService;
 import site.concertseat.global.dto.ResponseDto;
@@ -15,10 +16,19 @@ import static site.concertseat.global.statuscode.SuccessCode.OK;
 @RequiredArgsConstructor
 public class StadiumController {
     private final StadiumService stadiumService;
+    private final ConcertService concertService;
 
     @GetMapping
     public ResponseDto<StadiumListRes> stadiumList() {
         StadiumListRes result = stadiumService.findStadiums();
+
+        return ResponseDto.success(OK, result);
+    }
+
+    @GetMapping("/{stadiumId}/concerts")
+    public ResponseDto<ConcertSearchRes> concertSearch(@PathVariable Integer stadiumId,
+                                                       @ModelAttribute ConcertSearchReq concertSearchReq) {
+        ConcertSearchRes result = concertService.concertSearch(stadiumId, concertSearchReq);
 
         return ResponseDto.success(OK, result);
     }
