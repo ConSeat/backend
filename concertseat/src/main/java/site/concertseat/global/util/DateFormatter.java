@@ -25,4 +25,10 @@ public class DateFormatter {
         public static final int HOUR = 24;
         public static final int DAY = 7;
     }
+
+    public static String convertToTime(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss");
+
+        return LocalDateTime.now().format(formatter);
+    }
 }

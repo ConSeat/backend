@@ -11,6 +11,9 @@ public enum ErrorCode {
     INTERNAL_SERVER_ERROR(500, "Internal Server Error"),
     ALREADY_RESERVED(400, "Already Reserved"),
     INVALID_TOKEN(403, "Invalid Token"),
+    FILE_UPLOAD_FAIL(400, "File Upload Fail"),
+    FILE_EXTENSION_FAIL(400, "File Extension Fail"),
+    FILE_DELETE_FAIL(404, "File Delete Fail"),
     ;
 
     private final int httpStatusCode;

@@ -22,6 +22,11 @@ spring:
         order_updates: true
         order_inserts: true
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
   security:
     oauth2:
       client:
@@ -53,6 +58,21 @@ spring:
             token-uri: https://api.twitter.com/2/oauth2/token
             user-info-uri: https://api.twitter.com/2/users/me
             user-name-attribute: id
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_ACCESSKEY}
+      secretKey: ${S3_SECRETKEY}
+
+server:
+  tomcat:
+    max-http-form-post-size: 30MB
 
 jwt:
   access:
