@@ -28,6 +28,8 @@ import static site.concertseat.global.util.DateFormatter.convertToTime;
 @Service
 @RequiredArgsConstructor
 public class S3ServiceImpl implements S3Service {
+    private static final List<String> SUPPORTED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp");
+
     private final AmazonS3Client amazonS3Client;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -165,7 +167,7 @@ public class S3ServiceImpl implements S3Service {
     }
 
     private void validateImageFileExtension(String extension) {
-        if (!Arrays.asList("jpg", "jpeg", "png", "webp").contains(extension)) {
+        if (!SUPPORTED_EXTENSIONS.contains(extension)) {
             throw new CustomException(FILE_EXTENSION_FAIL);
         }
     }
