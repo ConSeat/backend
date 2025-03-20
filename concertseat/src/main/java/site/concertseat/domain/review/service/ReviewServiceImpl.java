@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import org.yaml.snakeyaml.util.EnumUtils;
 import site.concertseat.domain.bookmark.entity.Bookmark;
 import site.concertseat.domain.bookmark.repository.BookmarkRepository;
@@ -17,7 +18,9 @@ import site.concertseat.domain.review.repository.*;
 import site.concertseat.domain.stadium.entity.Seating;
 import site.concertseat.domain.stadium.repository.SeatingRepository;
 import site.concertseat.global.exception.CustomException;
+import site.concertseat.global.s3.S3Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -38,6 +41,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final SightRepository sightRepository;
     private final LikesRepository likesRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final S3Service s3Service;
 
     @Override
     @Transactional
@@ -190,5 +194,12 @@ public class ReviewServiceImpl implements ReviewService {
             review.setIsLiked(likes.get(review.getReviewId()) != null);
             review.setIsBookmarked(bookmarks.get(review.getReviewId()) != null);
         }
+    }
+
+    @Override
+    public ImageUploadRes uploadImage(Member member, List<MultipartFile> file) throws IOException {
+        List<String> imageUrls = s3Service.uploadMultipleFiles(file, "members/"+member.getId()+"/review");
+
+        return new ImageUploadRes(imageUrls);
     }
 }
