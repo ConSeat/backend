@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static site.concertseat.global.statuscode.ErrorCode.*;
+import static site.concertseat.global.util.DateFormatter.convertToTime;
 
 @Slf4j
 @Service
@@ -36,10 +37,10 @@ public class S3ServiceImpl implements S3Service {
     private String bucketUrl;
 
     @Override
-    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-        String extension = "webp";
+    public String upload(MultipartFile multipartFile, String dirName, int order) throws IOException {
+        String extension = "jpeg";
 
-        String s3FileName = convertS3Name(multipartFile, dirName, extension);
+        String s3FileName = convertS3Name(multipartFile, dirName, extension, order);
 
         byte[] content = convertToByte(multipartFile);
 
@@ -56,13 +57,14 @@ public class S3ServiceImpl implements S3Service {
         return originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
     }
 
-    private String convertS3Name(MultipartFile multipartFile, String dirName, String extension) {
+    private String convertS3Name(MultipartFile multipartFile, String dirName, String extension, int order) {
         if (multipartFile.isEmpty() || Objects.isNull(multipartFile.getOriginalFilename())) {
             throw new CustomException(FILE_UPLOAD_FAIL);
         }
         validateImageFileExtension(extension);
 
-        return dirName + "/upload_" + LocalDateTime.now() + "." + extension;
+        return String.format("%s/upload_%s-%02d.%s",
+                dirName, convertToTime(LocalDateTime.now()), order, extension);
     }
 
     private String uploadFile(byte[] content, String s3FileName, String contentType) throws IOException {
@@ -104,8 +106,11 @@ public class S3ServiceImpl implements S3Service {
 
         List<String> uploadedUrls = new ArrayList<>();
 
-        for (MultipartFile multipartFile : multipartFiles) {
-            String uploadedUrl = upload(multipartFile, dirName);
+        for(int i = 0; i < multipartFiles.size(); i++) {
+            MultipartFile file = multipartFiles.get(i);
+
+            String uploadedUrl = upload(file, dirName, i+1);
+
             uploadedUrls.add(uploadedUrl);
         }
 
@@ -113,15 +118,11 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public List<String> uploadCompressedMultipartFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException {
-        if (multipartFiles == null || multipartFiles.isEmpty()) {
-            throw new CustomException(FILE_UPLOAD_FAIL);
-        }
-
+    public List<String> convertCompressedMultipartFiles(List<String> fileUrls) throws IOException {
         List<String> uploadedUrls = new ArrayList<>();
 
-        for (MultipartFile multipartFile : multipartFiles) {
-            String uploadedUrl = uploadCompressedImage(multipartFile, dirName);
+        for (String url : fileUrls) {
+            String uploadedUrl = uploadCompressedImage(url);
             uploadedUrls.add(uploadedUrl);
         }
 
@@ -129,11 +130,15 @@ public class S3ServiceImpl implements S3Service {
     }
 
 
-    private String uploadCompressedImage(MultipartFile multipartFile, String dirName) throws IOException {
-        String extension = "webp";
-        String s3FileName = convertS3Name(multipartFile, dirName, extension);
+    private String uploadCompressedImage(String fileUrl) throws IOException {
+        String fileKey = fileUrl.replace(bucketUrl, "");
 
-        BufferedImage image = ImageIO.read(multipartFile.getInputStream());
+        S3Object s3Object = amazonS3Client.getObject(bucket, fileKey);
+        S3ObjectInputStream s3InputStream = s3Object.getObjectContent();
+        BufferedImage image = ImageIO.read(s3InputStream);
+
+        String extension = "jpeg";
+        String s3FileName = convertToCompressedUrl(fileKey);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
@@ -156,6 +161,12 @@ public class S3ServiceImpl implements S3Service {
         } finally {
             writer.dispose();
         }
+    }
+
+    private String convertToCompressedUrl(String url) {
+        int lastDotIndex = url.lastIndexOf(".");
+
+        return url.substring(0, lastDotIndex) + "_compress" + url.substring(lastDotIndex);
     }
 
     private void validateImageFileExtension(String extension) {
