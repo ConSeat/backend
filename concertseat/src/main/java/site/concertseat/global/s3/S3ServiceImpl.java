@@ -51,12 +51,6 @@ public class S3ServiceImpl implements S3Service {
         return multipartFile.getBytes();
     }
 
-    private String extractExtension(MultipartFile multipartFile) {
-        String originalFilename = multipartFile.getOriginalFilename();
-
-        return originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
-    }
-
     private String convertS3Name(MultipartFile multipartFile, String dirName, String extension, int order) {
         if (multipartFile.isEmpty() || Objects.isNull(multipartFile.getOriginalFilename())) {
             throw new CustomException(FILE_UPLOAD_FAIL);
