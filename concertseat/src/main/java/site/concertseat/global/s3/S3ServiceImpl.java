@@ -42,13 +42,11 @@ public class S3ServiceImpl implements S3Service {
         String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
         validateImageFileExtension(extension);
 
-        String convertExtension = "jpeg";
-
-        String s3FileName = convertS3Name(multipartFile, dirName, convertExtension, order);
+        String s3FileName = convertS3Name(multipartFile, dirName, extension, order);
 
         byte[] content = convertToByte(multipartFile);
 
-        return uploadFile(content, s3FileName, "image/" + convertExtension);
+        return uploadFile(content, s3FileName, "image/" + extension);
     }
 
     private byte[] convertToByte(MultipartFile multipartFile) throws IOException {
@@ -163,7 +161,7 @@ public class S3ServiceImpl implements S3Service {
     private String convertToCompressedUrl(String url) {
         int lastDotIndex = url.lastIndexOf(".");
 
-        return url.substring(0, lastDotIndex) + "_compress" + url.substring(lastDotIndex);
+        return url.substring(0, lastDotIndex) + "_compress.jpeg";
     }
 
     private void validateImageFileExtension(String extension) {
