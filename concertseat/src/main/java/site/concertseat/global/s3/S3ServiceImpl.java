@@ -1,0 +1,204 @@
+package site.concertseat.global.s3;
+
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.*;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+import site.concertseat.global.exception.CustomException;
+
+import javax.imageio.IIOImage;
+import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.ImageOutputStream;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.time.LocalDateTime;
+import java.util.*;
+
+import static site.concertseat.global.statuscode.ErrorCode.*;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class S3ServiceImpl implements S3Service {
+    private final AmazonS3Client amazonS3Client;
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
+
+    @Value("${BUCKET_URL}")
+    private String bucketUrl;
+
+    @Override
+    public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+        String extension = "webp";
+
+        String s3FileName = convertS3Name(multipartFile, dirName, extension);
+
+        byte[] content = convertToByte(multipartFile);
+
+        return uploadFile(content, s3FileName, "image/" + extension);
+    }
+
+    private byte[] convertToByte(MultipartFile multipartFile) throws IOException {
+        return multipartFile.getBytes();
+    }
+
+    private String extractExtension(MultipartFile multipartFile) {
+        String originalFilename = multipartFile.getOriginalFilename();
+
+        return originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+    }
+
+    private String convertS3Name(MultipartFile multipartFile, String dirName, String extension) {
+        if (multipartFile.isEmpty() || Objects.isNull(multipartFile.getOriginalFilename())) {
+            throw new CustomException(FILE_UPLOAD_FAIL);
+        }
+        validateImageFileExtension(extension);
+
+        return dirName + "/upload_" + LocalDateTime.now() + "." + extension;
+    }
+
+    private String uploadFile(byte[] content, String s3FileName, String contentType) throws IOException {
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentType(contentType);
+        objectMetadata.setContentLength(content.length);
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(content);
+
+        try {
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucket, s3FileName, byteArrayInputStream, objectMetadata);
+            amazonS3Client.putObject(putObjectRequest);
+        } catch (Exception e) {
+            log.info(e.getMessage());
+            throw new CustomException(FILE_UPLOAD_FAIL);
+        } finally {
+            try {
+                byteArrayInputStream.close();
+            } catch (IOException e) {
+                log.error(e.getMessage());
+            }
+        }
+
+        return generateS3(s3FileName);
+    }
+
+    private String generateS3(String s3FileName) {
+        if (!bucketUrl.endsWith("/")) {
+            bucketUrl += "/";
+        }
+        return bucketUrl + s3FileName;
+    }
+
+    @Override
+    public List<String> uploadMultipleFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException {
+        if (multipartFiles == null || multipartFiles.isEmpty()) {
+            throw new CustomException(FILE_UPLOAD_FAIL);
+        }
+
+        List<String> uploadedUrls = new ArrayList<>();
+
+        for (MultipartFile multipartFile : multipartFiles) {
+            String uploadedUrl = upload(multipartFile, dirName);
+            uploadedUrls.add(uploadedUrl);
+        }
+
+        return uploadedUrls;
+    }
+
+    @Override
+    public List<String> uploadCompressedMultipartFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException {
+        if (multipartFiles == null || multipartFiles.isEmpty()) {
+            throw new CustomException(FILE_UPLOAD_FAIL);
+        }
+
+        List<String> uploadedUrls = new ArrayList<>();
+
+        for (MultipartFile multipartFile : multipartFiles) {
+            String uploadedUrl = uploadCompressedImage(multipartFile, dirName);
+            uploadedUrls.add(uploadedUrl);
+        }
+
+        return uploadedUrls;
+    }
+
+
+    private String uploadCompressedImage(MultipartFile multipartFile, String dirName) throws IOException {
+        String extension = "webp";
+        String s3FileName = convertS3Name(multipartFile, dirName, extension);
+
+        BufferedImage image = ImageIO.read(multipartFile.getInputStream());
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        Iterator<ImageWriter> writers = ImageIO.getImageWritersByFormatName("jpeg");
+        if (!writers.hasNext()) {
+            throw new IllegalArgumentException("No PNG writers available");
+        }
+        ImageWriter writer = writers.next();
+
+        try (ImageOutputStream ios = new MemoryCacheImageOutputStream(baos)) {
+            writer.setOutput(ios);
+
+            ImageWriteParam writeParam = writer.getDefaultWriteParam();
+            writeParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            writeParam.setCompressionQuality(0.5f);
+
+            writer.write(null, new IIOImage(image, null, null), writeParam);
+
+            return uploadFile(baos.toByteArray(), s3FileName, "image/" + extension);
+        } finally {
+            writer.dispose();
+        }
+    }
+
+    private void validateImageFileExtension(String extension) {
+        if (!Arrays.asList("jpg", "jpeg", "png", "webp").contains(extension)) {
+            throw new CustomException(FILE_EXTENSION_FAIL);
+        }
+    }
+
+    @Override
+    public void deleteFolder(String folderPath) throws CustomException {
+        try {
+            ListObjectsV2Request listObjectsRequest = new ListObjectsV2Request().withBucketName(bucket).withPrefix(folderPath);
+            ListObjectsV2Result result;
+
+            do {
+                result = amazonS3Client.listObjectsV2(listObjectsRequest);
+                List<S3ObjectSummary> objects = result.getObjectSummaries();
+
+                for (S3ObjectSummary objectSummary : objects) {
+                    amazonS3Client.deleteObject(bucket, objectSummary.getKey());
+                }
+
+                listObjectsRequest.setContinuationToken(result.getNextContinuationToken());
+            } while (result.isTruncated());
+
+        } catch (AmazonServiceException e) {
+            throw new CustomException(FILE_DELETE_FAIL);
+        } catch (Exception e) {
+            throw new CustomException(FILE_DELETE_FAIL);
+        }
+    }
+
+    @Override
+    public void deleteFile(String fileUrl) throws CustomException {
+        try {
+            try {
+                String fileKey = fileUrl.replace(bucketUrl, "");
+                amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, fileKey));
+            } catch (AmazonServiceException e) {
+                throw new CustomException(FILE_DELETE_FAIL);
+            }
+        } catch (Exception exception) {
+            throw new CustomException(FILE_DELETE_FAIL);
+        }
+    }
+}
