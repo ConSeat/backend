@@ -42,6 +42,11 @@ spring:
       host: localhost
       port: 6379
 
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
   security:
     oauth2:
       client:
@@ -81,3 +86,15 @@ jwt:
   refresh:
     secret: ${JWT_REFRESH_SECRET}
     expiration: ${JWT_REFRESH_EXPIRATION}
+
+cloud:
+  aws:
+    s3:
+      bucket: ${S3_BUCKET}
+    stack:
+      auto: false
+    region:
+      static: ap-northeast-2
+    credentials:
+      accessKey: ${S3_ACCESSKEY}
+      secretKey: ${S3_SECRETKEY}
