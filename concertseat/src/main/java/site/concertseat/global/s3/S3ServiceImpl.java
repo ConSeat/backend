@@ -38,13 +38,17 @@ public class S3ServiceImpl implements S3Service {
 
     @Override
     public String upload(MultipartFile multipartFile, String dirName, int order) throws IOException {
-        String extension = "jpeg";
+        String originalFilename = multipartFile.getOriginalFilename();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+        validateImageFileExtension(extension);
 
-        String s3FileName = convertS3Name(multipartFile, dirName, extension, order);
+        String convertExtension = "jpeg";
+
+        String s3FileName = convertS3Name(multipartFile, dirName, convertExtension, order);
 
         byte[] content = convertToByte(multipartFile);
 
-        return uploadFile(content, s3FileName, "image/" + extension);
+        return uploadFile(content, s3FileName, "image/" + convertExtension);
     }
 
     private byte[] convertToByte(MultipartFile multipartFile) throws IOException {
@@ -55,7 +59,6 @@ public class S3ServiceImpl implements S3Service {
         if (multipartFile.isEmpty() || Objects.isNull(multipartFile.getOriginalFilename())) {
             throw new CustomException(FILE_UPLOAD_FAIL);
         }
-        validateImageFileExtension(extension);
 
         return String.format("%s/upload_%s-%02d.%s",
                 dirName, convertToTime(LocalDateTime.now()), order, extension);
