@@ -197,4 +197,78 @@ public class StadiumControllerTest {
                         ))
                 );
     }
+
+    @Test
+    public void 콘서트장_특징_정보_조회_성공() throws Exception {
+        //given
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/features")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "콘서트장 특징 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("콘서트장 특징 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.features[].featureId").type(NUMBER)
+                                                        .description("특징 아이디"),
+                                                fieldWithPath("body.features[].name").type(STRING)
+                                                        .description("특징 정보")
+
+                                        )
+                                )
+                                .responseSchema(Schema.schema("콘서트장 특징 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 콘서트장_방해_요소_조회_성공() throws Exception {
+        //given
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/obstructions")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "콘서트장 방해요소 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("콘서트장 방해요소 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.obstructions[].obstructionId").type(NUMBER)
+                                                        .description("방해요소 아이디"),
+                                                fieldWithPath("body.obstructions[].name").type(STRING)
+                                                        .description("방해요소 정보")
+
+                                        )
+                                )
+                                .responseSchema(Schema.schema("콘서트장 방해요소 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
 }
