@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import site.concertseat.domain.concert.dto.ConcertSearchReq;
 import site.concertseat.domain.concert.dto.ConcertSearchRes;
 import site.concertseat.domain.concert.service.ConcertService;
+import site.concertseat.domain.stadium.dto.FeatureListRes;
 import site.concertseat.domain.stadium.dto.StadiumDetailsRes;
 import site.concertseat.domain.stadium.dto.StadiumListRes;
 import site.concertseat.domain.stadium.service.StadiumService;
@@ -37,6 +38,13 @@ public class StadiumController {
     public ResponseDto<ConcertSearchRes> concertSearch(@PathVariable Integer stadiumId,
                                                        @ModelAttribute ConcertSearchReq concertSearchReq) {
         ConcertSearchRes result = concertService.concertSearch(stadiumId, concertSearchReq);
+
+        return ResponseDto.success(OK, result);
+    }
+
+    @GetMapping("/features")
+    public ResponseDto<FeatureListRes> featureList() {
+        FeatureListRes result = stadiumService.findFeatures();
 
         return ResponseDto.success(OK, result);
     }
