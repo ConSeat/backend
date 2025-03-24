@@ -24,4 +24,8 @@ public interface ObstructionRepository extends JpaRepository<ReviewObstruction, 
             "from ReviewObstruction ro " +
             "where ro.review in :reviews")
     List<ReviewObstruction> findReviewObstruction(@Param("reviews") List<Review> reviews);
+
+    @Query("select o " +
+            "from Obstruction o")
+    List<Obstruction> findAllObstructions();
 }

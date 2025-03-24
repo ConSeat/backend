@@ -3,8 +3,9 @@ package site.concertseat.domain.stadium.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import site.concertseat.domain.stadium.dto.StadiumDetailsRes;
-import site.concertseat.domain.stadium.dto.StadiumListRes;
+import site.concertseat.domain.review.repository.FeatureRepository;
+import site.concertseat.domain.review.repository.ObstructionRepository;
+import site.concertseat.domain.stadium.dto.*;
 import site.concertseat.domain.stadium.entity.Floor;
 import site.concertseat.domain.stadium.entity.Seating;
 import site.concertseat.domain.stadium.entity.Section;
@@ -23,6 +24,8 @@ import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 @RequiredArgsConstructor
 public class StadiumServiceImpl implements StadiumService {
     private final StadiumRepository stadiumRepository;
+    private final FeatureRepository featureRepository;
+    private final ObstructionRepository obstructionRepository;
 
     @Override
     public StadiumListRes findStadiums() {
@@ -48,5 +51,19 @@ public class StadiumServiceImpl implements StadiumService {
                 .collect(Collectors.groupingBy(seats -> seats.getSection().getId()));
 
         return new StadiumDetailsRes(floors, sections, seating);
+    }
+
+    @Override
+    public FeatureListRes findFeatures() {
+        return new FeatureListRes(featureRepository.findAllFeatures().stream()
+                .map(FeatureDto::new)
+                .toList());
+    }
+
+    @Override
+    public ObstructionListRes findObstructions() {
+        return new ObstructionListRes(obstructionRepository.findAllObstructions().stream()
+                .map(ObstructionDto::new)
+                .toList());
     }
 }
