@@ -1,9 +1,13 @@
+import org.hidetake.gradle.swagger.generator.GenerateSwaggerUI
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.4.3'
 	id 'io.spring.dependency-management' version '1.1.7'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 	id 'com.epages.restdocs-api-spec' version '0.19.4'
+	id 'org.hidetake.swagger.generator' version '2.18.2'
 }
 
 group = 'site.concertseat'
@@ -20,7 +24,7 @@ repositories {
 }
 
 ext {
-	set('snippetsDir', file("build/generated-snippets"))
+	serverUrl = project.findProperty('serverUrl')
 }
 
 dependencies {
@@ -62,20 +66,51 @@ dependencies {
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testImplementation 'com.epages:restdocs-api-spec-mockmvc:0.19.4'
+
+	swaggerUI 'org.webjars:swagger-ui:4.11.1'
+}
+
+swaggerSources {
+	sample {
+		setInputFile(file("${project.buildDir}/api-spec/openapi3.yaml"))
+	}
 }
 
 openapi3 {
-	server = 'localhost:8080'
-	outputFileNamePrefix = 'concert-seat'
+	server = "${serverUrl}"
 	title = 'Con:Seat API Docs'
 	description = 'Con:Seat API description'
 	version = '0.1.0'
-	format = 'json'
+	format = 'yaml'
+}
+
+tasks.withType(GenerateSwaggerUI).configureEach {
+	dependsOn 'openapi3'
+}
+
+tasks.register('copySwaggerUI', Copy) {
+	dependsOn 'generateSwaggerUISample'
+	def generateSwaggerUISampleTask = tasks.named('generateSwaggerUISample', GenerateSwaggerUI).get()
+	from("${generateSwaggerUISampleTask.outputDir}")
+	into("${project.buildDir}/resources/main/static/docs")
+}
+
+tasks.withType(BootJar).configureEach {
+	dependsOn 'copySwaggerUI'
 }
 
 tasks.named('jar').configure {
 	dependsOn("openapi3")
 }
+
+tasks.named('jar') {
+	dependsOn 'copySwaggerUI'
+}
+
+tasks.named('resolveMainClassName') {
+	dependsOn 'copySwaggerUI'
+}
+
 
 tasks.named('test') {
 	useJUnitPlatform()
