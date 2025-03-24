@@ -33,7 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(POST, "/api/reviews/concerts/{concertId}/seating/{seatingId}")
                             .authenticated()
-                        .requestMatchers("/api/**", "/h2-console/**").permitAll()
+                        .requestMatchers("/api/**", "/h2-console/**", "/docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
