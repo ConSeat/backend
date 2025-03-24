@@ -17,6 +17,7 @@ import site.concertseat.global.s3.S3Service;
 import java.io.IOException;
 import java.util.List;
 
+import static site.concertseat.global.statuscode.SuccessCode.CREATED;
 import static site.concertseat.global.statuscode.SuccessCode.OK;
 
 @RestController
@@ -42,7 +43,7 @@ public class ReviewController {
                                         @Valid @RequestBody ReviewPostReq reviewPostReq) {
         reviewService.postReview(member, seatingId, concertId, reviewPostReq);
 
-        return ResponseDto.success(OK);
+        return ResponseDto.success(CREATED);
     }
 
     @PostMapping("/images")
