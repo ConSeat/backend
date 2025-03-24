@@ -162,4 +162,39 @@ public class StadiumControllerTest {
                         ))
                 );
     }
+
+    @Test
+    public void 콘서트장_정보_조회_실패_없는_경기장_아이디() throws Exception {
+        //given
+        int stadiumId = 2;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/{stadiumId}", stadiumId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "콘서트장 정보 조회 실패(없는 경기장 아이디)",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("콘서트장 정보 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body").type(NULL)
+                                                        .description("본문 없음")
+                                        )
+                                )
+                                .responseSchema(Schema.schema("콘서트장 정보 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
 }
