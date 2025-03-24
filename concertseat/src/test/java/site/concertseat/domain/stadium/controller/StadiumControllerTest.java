@@ -25,6 +25,7 @@ import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 import static site.concertseat.global.statuscode.SuccessCode.OK;
 import static site.concertseat.utils.ResponseFieldUtils.getCommonResponseFields;
 
@@ -77,7 +78,7 @@ public class StadiumControllerTest {
     }
 
     @Test
-    public void 콘서트_목록_조회_검색조건__성공() throws Exception {
+    public void 콘서트_목록_조회_조건_검색_성공() throws Exception {
         // given
         int stadiumId = 1;
 
@@ -113,6 +114,50 @@ public class StadiumControllerTest {
                                         )
                                 )
                                 .responseSchema(Schema.schema("콘서트 목록 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 콘서트장_정보_조회_성공() throws Exception {
+        //given
+        int stadiumId = 1;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/{stadiumId}", stadiumId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "콘서트장 정보 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("콘서트장 정보 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.floors[].name").type(STRING)
+                                                        .description("구분 이름(FLOOR, 1F, 2F)"),
+                                                fieldWithPath("body.floors[].sections[].name").type(STRING)
+                                                        .description("구역 이름"),
+                                                fieldWithPath("body.floors[].sections[].seats[].name").type(STRING)
+                                                        .description("열 이름"),
+                                                fieldWithPath("body.floors[].sections[].seats[].seatingId").type(NUMBER)
+                                                        .description("열 아이디"),
+                                                fieldWithPath("body.floors[].sections[].seats[].name").type(STRING)
+                                                        .description("열 이름")
+
+                                        )
+                                )
+                                .responseSchema(Schema.schema("콘서트장 정보 조회 Response"))
                                 .build()
                         ))
                 );
