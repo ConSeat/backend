@@ -25,7 +25,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = tokenProvider.resolveToken(request);
 
-        if (token != null && tokenProvider.validateToken(token, true) && tokenProvider.isAccessToken(token)) {
+        if (tokenProvider.validateAccessToken(token)) {
             String uuid = tokenProvider.getUuid(token, true);
             UserDetails userDetails = userDetailsService.loadUserByUsername(uuid);
 
