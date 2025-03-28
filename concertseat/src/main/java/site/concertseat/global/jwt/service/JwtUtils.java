@@ -6,6 +6,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,11 +110,19 @@ public class JwtUtils {
         String deviceId = getDeviceIdFromUserAgent(userAgent);
         String refreshToken = (String) redisUtils.getData("refresh:" + uuid + ":" + deviceId);
 
-        if (refreshToken == null || !refreshToken.equals(token)) {
-            return false;
-        }
+        return refreshToken != null && refreshToken.equals(token);
+    }
 
-        return true;
+    public void logout(String userAgent, HttpServletRequest request, HttpServletResponse response) {
+        String refresh = getRefreshTokenFromCookie(request, userAgent);
+        String uuid = getUuid(refresh, false);
+        String deviceId = getDeviceIdFromUserAgent(userAgent);
+
+        redisUtils.deleteData("refresh:" + uuid + ":" + deviceId);
+
+        Cookie cookie = cookieUtils.createCookie("refresh", null, "/api/auth/", 0);
+
+        response.addCookie(cookie);
     }
 
     public boolean validateAccessToken(String token) {
@@ -173,7 +182,7 @@ public class JwtUtils {
     public Cookie createRefreshCookie(String uuid, String userAgent) {
         String refreshToken = createRefreshToken(uuid, userAgent);
 
-        return cookieUtils.createCookie("refresh", refreshToken, "/api/auth/login", refreshExpiration);
+        return cookieUtils.createCookie("refresh", refreshToken, "/api/auth/", refreshExpiration);
     }
 
     private String createRefreshToken(String uuid, String userAgent) {

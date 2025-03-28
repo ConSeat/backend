@@ -30,4 +30,13 @@ public class AuthController {
 
         return ResponseDto.success(OK);
     }
+
+    @PostMapping("/logout")
+    public ResponseDto<Void> logout(@RequestHeader("User-Agent") String userAgent,
+                                    HttpServletRequest request,
+                                    HttpServletResponse response) {
+        jwtUtils.logout(userAgent, request, response);
+
+        return ResponseDto.success(OK);
+    }
 }
