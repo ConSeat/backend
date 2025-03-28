@@ -1,12 +1,13 @@
 package site.concertseat.global.jwt.dto;
 
+import jakarta.servlet.http.Cookie;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RefreshDto {
+public class LoginDto {
     private String accessToken;
 
-    private String refreshToken;
+    private Cookie cookie;
 }

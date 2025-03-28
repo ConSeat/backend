@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -13,8 +14,9 @@ import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.member.enums.Role;
 import site.concertseat.domain.member.repository.MemberRepository;
 import site.concertseat.global.exception.CustomException;
-import site.concertseat.global.jwt.dto.RefreshDto;
+import site.concertseat.global.jwt.dto.LoginDto;
 import site.concertseat.global.redis.RedisUtils;
+import site.concertseat.global.util.CookieUtils;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
@@ -45,6 +47,7 @@ public class JwtUtils {
     private Key refreshKey;
 
     private final RedisUtils redisUtils;
+    private final CookieUtils cookieUtils;
     private final MemberRepository memberRepository;
 
     private static final String ISSUER = "ISS";
@@ -59,7 +62,20 @@ public class JwtUtils {
                 SignatureAlgorithm.HS256.getJcaName());
     }
 
-    public String createAccessToken(String uuid, Role role) {
+    public LoginDto login(String userAgent, HttpServletRequest request) {
+        String refresh = getRefreshTokenFromCookie(request, userAgent);
+
+        String uuid = getUuid(refresh, false);
+
+        Member member = memberRepository.findByUuid(uuid)
+                .orElseThrow(() -> new CustomException(INVALID_TOKEN));
+
+        String accessToken = createAccessToken(uuid, member.getRole());
+
+        return new LoginDto(accessToken, createRefreshCookie(uuid, userAgent));
+    }
+
+    private String createAccessToken(String uuid, Role role) {
         Map<String, Object>  claims = new HashMap<>();
         claims.put("type", ACCESS_TOKEN_CLAIM_NAME);
         claims.put("role", role.getAuthority());
@@ -67,7 +83,100 @@ public class JwtUtils {
         return createToken(uuid, Jwts.claims(claims), accessExpiration, accessKey);
     }
 
-    public String createRefreshToken(String uuid, String userAgent) {
+    private String getRefreshTokenFromCookie(HttpServletRequest request, String userAgent) {
+        Cookie cookie = cookieUtils.getCookieFromRequest(request, "refresh");
+
+        if (cookie == null) {
+            throw new CustomException(INVALID_TOKEN);
+        }
+
+        String refresh = cookie.getValue();
+
+        if (!(validateRefreshToken(refresh, userAgent))) {
+            throw new CustomException(INVALID_TOKEN);
+        }
+
+        return refresh;
+    }
+
+    private boolean validateRefreshToken(String token, String userAgent) {
+        if (!validateToken(token, false) || !isRefreshToken(token)) {
+            return false;
+        }
+
+        String uuid = getUuid(token, false);
+
+        String deviceId = getDeviceIdFromUserAgent(userAgent);
+        String refreshToken = (String) redisUtils.getData("refresh:" + uuid + ":" + deviceId);
+
+        if (refreshToken == null || !refreshToken.equals(token)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean validateAccessToken(String token) {
+        return token != null && validateToken(token, true) && isAccessToken(token);
+    }
+
+    private boolean validateToken(String token, boolean isAccess) {
+        try {
+            if (isExpired(token, isAccess)) {
+                return false;
+            }
+
+            String issuer = Jwts.parserBuilder().setSigningKey(isAccess ? accessKey : refreshKey).build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .getIssuer();
+
+            return issuer.equals(ISSUER);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isAccessToken(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(accessKey).build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("type")
+                    .equals(ACCESS_TOKEN_CLAIM_NAME);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isExpired(String token, boolean isAccess) {
+        Date expiration = Jwts.parserBuilder().setSigningKey(isAccess ? accessKey : refreshKey).build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+
+        return expiration.before(new Date());
+    }
+
+    private boolean isRefreshToken(String token) {
+        try {
+            return Jwts.parserBuilder().setSigningKey(refreshKey).build()
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("type")
+                    .equals(REFRESH_TOKEN_CLAIM_NAME);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Cookie createRefreshCookie(String uuid, String userAgent) {
+        String refreshToken = createRefreshToken(uuid, userAgent);
+
+        return cookieUtils.createCookie("refresh", refreshToken, "/api/auth/login", refreshExpiration);
+    }
+
+    private String createRefreshToken(String uuid, String userAgent) {
         Map<String, Object>  claims = new HashMap<>();
         claims.put("type", REFRESH_TOKEN_CLAIM_NAME);
 
@@ -100,61 +209,6 @@ public class JwtUtils {
                 .getSubject();
     }
 
-    public boolean validateToken(String token, boolean isAccess) {
-        try {
-            if (isExpired(token, isAccess)) {
-                return false;
-            }
-
-            String issuer = Jwts.parserBuilder().setSigningKey(isAccess ? accessKey : refreshKey).build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getIssuer();
-
-            return issuer.equals(ISSUER);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private boolean isExpired(String token, boolean isAccess) {
-        Date expiration = Jwts.parserBuilder().setSigningKey(isAccess ? accessKey : refreshKey).build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
-
-        return expiration.before(new Date());
-    }
-
-    public RefreshDto refresh(String token, String userAgent) {
-        validateRefreshToken(token, userAgent);
-
-        String uuid = getUuid(token, false);
-
-        Member member = memberRepository.findByUuid(uuid)
-                .orElseThrow(() -> new CustomException(INVALID_TOKEN));
-
-        String accessToken = createAccessToken(uuid, member.getRole());
-        String refreshToken = createRefreshToken(uuid, userAgent);
-
-        return new RefreshDto(accessToken, refreshToken);
-    }
-
-    private void validateRefreshToken(String token, String userAgent) throws CustomException {
-        if (!validateToken(token, false) || !isRefreshToken(token)) {
-            throw new CustomException(INVALID_TOKEN);
-        }
-
-        String uuid = getUuid(token, false);
-
-        String deviceId = getDeviceIdFromUserAgent(userAgent);
-        String refreshToken = (String) redisUtils.getData("refresh:" + uuid + ":" + deviceId);
-
-        if (refreshToken == null || !refreshToken.equals(token)) {
-            throw new CustomException(INVALID_TOKEN);
-        }
-    }
-
     public String resolveToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");
 
@@ -163,30 +217,6 @@ public class JwtUtils {
         }
 
         return null;
-    }
-
-    public boolean isAccessToken(String token) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(accessKey).build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("type")
-                    .equals(ACCESS_TOKEN_CLAIM_NAME);
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private boolean isRefreshToken(String token) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(refreshKey).build()
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("type")
-                    .equals(REFRESH_TOKEN_CLAIM_NAME);
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     private String getDeviceIdFromUserAgent(String userAgent) {
