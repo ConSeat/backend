@@ -588,6 +588,11 @@ public class ReviewControllerTest {
 
     private static ReviewPostReq getInvalidImage() {
         List<String> images = new ArrayList<>();
+        images.add("url1");
+        images.add("url2");
+        images.add("url3");
+        images.add("url4");
+        images.add("url5");
 
         List<Integer> features = new ArrayList<>();
         features.add(1);
@@ -722,7 +727,7 @@ public class ReviewControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.header.message").value(BAD_REQUEST.getMessage()))
                 .andDo(document(
-                        "콘서트 리뷰 등록 실패 - 없는 특징 아이디",
+                        "콘서트 리뷰 등록 실패 - 잘못된 특징 아이디",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
@@ -904,7 +909,7 @@ public class ReviewControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
                 .andDo(document(
-                        "콘서트 리뷰 등록 실패 - 이미지 4개 초과",
+                        "콘서트 리뷰 등록 실패 - 없는 좌석 아이디",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
