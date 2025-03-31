@@ -31,8 +31,10 @@ public class ReviewPostReq {
     @Size(min = 1, max = 4)
     private List<String> images;
 
+    @Size(min = 1)
     private List<Integer> features;
 
+    @Size(min = 1)
     private List<Integer> obstructions;
 
     public Review toEntity(Member member, Seating seating, Concert concert) {
