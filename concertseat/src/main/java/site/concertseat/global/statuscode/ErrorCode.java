@@ -14,6 +14,7 @@ public enum ErrorCode {
     FILE_UPLOAD_FAIL(400, "File Upload Fail"),
     FILE_EXTENSION_FAIL(400, "File Extension Fail"),
     FILE_DELETE_FAIL(404, "File Delete Fail"),
+    INVALID_ARGUMENT(400, "Invalid Argument"),
     ;
 
     private final int httpStatusCode;

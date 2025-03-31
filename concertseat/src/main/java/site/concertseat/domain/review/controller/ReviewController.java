@@ -25,8 +25,6 @@ import static site.concertseat.global.statuscode.SuccessCode.OK;
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
-    private final S3Service s3Service;
-    private final JwtUtils jwtUtils;
 
     @GetMapping("/seating/{seatingId}")
     public ResponseDto<ReviewSearchRes> reviewSearch(@LoginMember Member member,
