@@ -49,6 +49,6 @@ public class ReviewController {
                                                    @RequestParam("files") List<MultipartFile> files) throws IOException {
         ImageUploadRes res = reviewService.uploadImage(member, files);
 
-        return ResponseDto.success(OK, res);
+        return ResponseDto.success(CREATED, res);
     }
 }
