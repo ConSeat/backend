@@ -99,7 +99,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -190,7 +190,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -281,7 +281,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -372,7 +372,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -468,7 +468,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -557,7 +557,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -651,7 +651,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -740,7 +740,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -831,7 +831,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -922,7 +922,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
@@ -989,7 +989,7 @@ public class ReviewControllerTest {
                                 .requestFields(
                                         List.of(
                                                 fieldWithPath("images[]").type(ARRAY)
-                                                        .description("업로드된 url 리스트"),
+                                                        .description("이미지 url 리스트"),
                                                 fieldWithPath("features[]").type(ARRAY)
                                                         .description("특징 Id 리스트"),
                                                 fieldWithPath("obstructions[]").type(ARRAY)
