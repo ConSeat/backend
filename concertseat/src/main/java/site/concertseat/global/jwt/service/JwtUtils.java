@@ -76,7 +76,7 @@ public class JwtUtils {
         return new LoginDto(accessToken, createRefreshCookie(uuid, userAgent));
     }
 
-    private String createAccessToken(String uuid, Role role) {
+    public String createAccessToken(String uuid, Role role) {
         Map<String, Object>  claims = new HashMap<>();
         claims.put("type", ACCESS_TOKEN_CLAIM_NAME);
         claims.put("role", role.getAuthority());
