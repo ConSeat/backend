@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +28,6 @@ import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 import static site.concertseat.global.statuscode.SuccessCode.OK;
 import static site.concertseat.utils.ResponseFieldUtils.getCommonResponseFields;
 
-@WithMockUser
 @Transactional
 @SpringBootTest
 @AutoConfigureMockMvc
