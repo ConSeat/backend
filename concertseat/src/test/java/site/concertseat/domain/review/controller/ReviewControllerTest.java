@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -26,6 +28,7 @@ import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.docume
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
@@ -1013,6 +1016,52 @@ public class ReviewControllerTest {
                                 )
                                 .requestSchema(Schema.schema("콘서트 리뷰 등록 Request"))
                                 .responseSchema(Schema.schema("콘서트 리뷰 등록 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 이미지_업로드_성공() throws Exception {
+        //given
+        MockMultipartFile file1 = new MockMultipartFile("files", "sample1.jpg", "image/jpeg", "image/sample1.jpg".getBytes());
+        MockMultipartFile file2 = new MockMultipartFile("files", "sample2.jpg", "image/jpeg", "image/sample2.jpg".getBytes());
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                multipart("/api/reviews/images")
+                        .file(file1)
+                        .file(file2)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .contentType("multipart/form-data")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.header.message").value(CREATED.getMessage()))
+                .andDo(document(
+                        "이미지 업로드 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("이미지 업로드 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.originalImage[]").type(ARRAY)
+                                                        .description("s3 이미지 url 리스트")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("이미지 업로드 Request"))
+                                .responseSchema(Schema.schema("이미지 업로드 Response"))
                                 .build()
                         ))
                 );
