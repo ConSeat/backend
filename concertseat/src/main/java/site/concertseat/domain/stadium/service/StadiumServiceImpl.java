@@ -54,6 +54,14 @@ public class StadiumServiceImpl implements StadiumService {
     }
 
     @Override
+    public SectionListRes findSections(Integer stadiumId) {
+        List<Floor> floors = stadiumRepository.findFloorsByStadiumId(stadiumId);
+        List<Section> sections = stadiumRepository.findSectionsByFloors(floors);
+
+        return new SectionListRes(floors, sections);
+    }
+
+    @Override
     public FeatureListRes findFeatures() {
         return new FeatureListRes(featureRepository.findAllFeatures().stream()
                 .map(FeatureDto::new)

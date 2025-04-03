@@ -5,10 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import site.concertseat.domain.concert.dto.ConcertSearchReq;
 import site.concertseat.domain.concert.dto.ConcertSearchRes;
 import site.concertseat.domain.concert.service.ConcertService;
-import site.concertseat.domain.stadium.dto.FeatureListRes;
-import site.concertseat.domain.stadium.dto.ObstructionListRes;
-import site.concertseat.domain.stadium.dto.StadiumDetailsRes;
-import site.concertseat.domain.stadium.dto.StadiumListRes;
+import site.concertseat.domain.stadium.dto.*;
 import site.concertseat.domain.stadium.service.StadiumService;
 import site.concertseat.global.dto.ResponseDto;
 
@@ -31,6 +28,13 @@ public class StadiumController {
     @GetMapping("/{stadiumId}")
     public ResponseDto<StadiumDetailsRes> stadiumDetails(@PathVariable Integer stadiumId) {
         StadiumDetailsRes result = stadiumService.getStadiumDetails(stadiumId);
+
+        return ResponseDto.success(OK, result);
+    }
+
+    @GetMapping("/{stadiumId}/sections")
+    public ResponseDto<SectionListRes> sectionList(@PathVariable Integer stadiumId) {
+        SectionListRes result = stadiumService.findSections(stadiumId);
 
         return ResponseDto.success(OK, result);
     }
