@@ -269,4 +269,48 @@ public class StadiumControllerTest {
                         ))
                 );
     }
+
+    @Test
+    public void 콘서트장_목록_조회_성공() throws Exception {
+        //given
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "콘서트장 목록 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("콘서트장 목록 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.active[].stadiumId").type(NUMBER)
+                                                        .description("활성화된 콘서트장 Id"),
+                                                fieldWithPath("body.active[].stadiumName").type(STRING)
+                                                        .description("활성화된 콘서트장 이름"),
+                                                fieldWithPath("body.active[].stadiumImage").type(STRING)
+                                                        .description("활성화된 콘서트장 이미지 src"),
+                                                fieldWithPath("body.inactive[].stadiumId").type(NUMBER)
+                                                        .description("비활성화된 콘서트장 Id"),
+                                                fieldWithPath("body.inactive[].stadiumName").type(STRING)
+                                                        .description("비활성화된 콘서트장 이름"),
+                                                fieldWithPath("body.inactive[].stadiumImage").type(STRING)
+                                                        .description("비활성화된 콘서트장 이미지 src")
+                                        )
+                                )
+                                .responseSchema(Schema.schema("콘서트장 목록 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
 }
