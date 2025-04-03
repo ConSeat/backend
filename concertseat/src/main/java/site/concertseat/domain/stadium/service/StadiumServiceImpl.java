@@ -62,6 +62,13 @@ public class StadiumServiceImpl implements StadiumService {
     }
 
     @Override
+    public SeatingListRes findSeating(Integer sectionId) {
+        List<SeatingWithCountDto> seatingWithCount = stadiumRepository.findSeatingWithCount(sectionId);
+
+        return new SeatingListRes(seatingWithCount);
+    }
+
+    @Override
     public FeatureListRes findFeatures() {
         return new FeatureListRes(featureRepository.findAllFeatures().stream()
                 .map(FeatureDto::new)

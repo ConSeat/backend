@@ -9,6 +9,8 @@ public interface StadiumService {
 
     SectionListRes findSections(Integer stadiumId);
 
+    SeatingListRes findSeating(Integer sectionId);
+
     FeatureListRes findFeatures();
 
     ObstructionListRes findObstructions();

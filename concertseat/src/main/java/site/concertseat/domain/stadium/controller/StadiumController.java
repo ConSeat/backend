@@ -39,6 +39,13 @@ public class StadiumController {
         return ResponseDto.success(OK, result);
     }
 
+    @GetMapping("/sections/{sectionId}/seating")
+    public ResponseDto<SeatingListRes> seatingList(@PathVariable Integer sectionId) {
+        SeatingListRes result = stadiumService.findSeating(sectionId);
+
+        return ResponseDto.success(OK, result);
+    }
+
     @GetMapping("/{stadiumId}/concerts")
     public ResponseDto<ConcertSearchRes> concertSearch(@PathVariable Integer stadiumId,
                                                        @ModelAttribute ConcertSearchReq concertSearchReq) {
