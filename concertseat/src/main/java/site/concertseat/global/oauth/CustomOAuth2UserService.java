@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.member.repository.MemberRepository;
+import site.concertseat.global.oauth.response.GoogleResponse;
 import site.concertseat.global.oauth.response.KakaoResponse;
 import site.concertseat.global.oauth.response.OAuth2Response;
 import site.concertseat.global.oauth.response.TwitterResponse;
@@ -26,6 +27,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2Response oAuth2Response = null;
 
         switch (registration) {
+            case "google" -> oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
             case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
             case "twitter" -> oAuth2Response = new TwitterResponse(oAuth2User.getAttributes());
         }
