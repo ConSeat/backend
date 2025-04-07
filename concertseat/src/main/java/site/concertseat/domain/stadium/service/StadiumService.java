@@ -1,14 +1,15 @@
 package site.concertseat.domain.stadium.service;
 
-import site.concertseat.domain.stadium.dto.FeatureListRes;
-import site.concertseat.domain.stadium.dto.ObstructionListRes;
-import site.concertseat.domain.stadium.dto.StadiumDetailsRes;
-import site.concertseat.domain.stadium.dto.StadiumListRes;
+import site.concertseat.domain.stadium.dto.*;
 
 public interface StadiumService {
     StadiumListRes findStadiums();
 
     StadiumDetailsRes getStadiumDetails(Integer stadiumId);
+
+    SectionListRes findSections(Integer stadiumId);
+
+    SeatingListRes findSeating(Integer sectionId);
 
     FeatureListRes findFeatures();
 
