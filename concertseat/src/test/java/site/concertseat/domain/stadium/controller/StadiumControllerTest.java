@@ -164,7 +164,7 @@ public class StadiumControllerTest {
     @Test
     public void 콘서트장_정보_조회_실패_없는_경기장_아이디() throws Exception {
         //given
-        int stadiumId = 2;
+        int stadiumId = 1000;
 
         //when
         ResultActions actions = mockMvc.perform(
@@ -305,7 +305,9 @@ public class StadiumControllerTest {
                                                 fieldWithPath("body.inactive[].stadiumName").type(STRING)
                                                         .description("비활성화된 콘서트장 이름"),
                                                 fieldWithPath("body.inactive[].stadiumImage").type(STRING)
-                                                        .description("비활성화된 콘서트장 이미지 src")
+                                                        .description("비활성화된 콘서트장 이미지 src"),
+                                                fieldWithPath("body.totalReviewCount").type(NUMBER)
+                                                        .description("전체 리뷰 개수")
                                         )
                                 )
                                 .responseSchema(Schema.schema("콘서트장 목록 조회 Response"))
