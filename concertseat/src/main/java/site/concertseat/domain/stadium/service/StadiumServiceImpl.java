@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.concertseat.domain.review.repository.FeatureRepository;
 import site.concertseat.domain.review.repository.ObstructionRepository;
+import site.concertseat.domain.review.service.ReviewService;
 import site.concertseat.domain.stadium.dto.*;
 import site.concertseat.domain.stadium.entity.Floor;
 import site.concertseat.domain.stadium.entity.Seating;
@@ -26,12 +27,14 @@ public class StadiumServiceImpl implements StadiumService {
     private final StadiumRepository stadiumRepository;
     private final FeatureRepository featureRepository;
     private final ObstructionRepository obstructionRepository;
+    private final ReviewService reviewService;
 
     @Override
     public StadiumListRes findStadiums() {
         List<Stadium> stadiums = stadiumRepository.findAll();
+        Long totalReviewCount = reviewService.getTotalReviewCount();
 
-        return new StadiumListRes(stadiums);
+        return new StadiumListRes(stadiums, totalReviewCount);
     }
 
     @Override
