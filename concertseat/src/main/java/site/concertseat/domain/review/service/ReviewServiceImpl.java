@@ -1,6 +1,7 @@
 package site.concertseat.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -201,5 +202,11 @@ public class ReviewServiceImpl implements ReviewService {
         List<String> imageUrls = s3Service.uploadMultipleFiles(file, "members/"+member.getId()+"/review");
 
         return new ImageUploadRes(imageUrls);
+    }
+
+    @Cacheable(value = "reviewCount")
+    @Override
+    public Long getTotalReviewCount() {
+        return reviewRepository.countApprovedReviews();
     }
 }
