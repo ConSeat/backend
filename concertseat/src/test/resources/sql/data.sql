@@ -2,7 +2,9 @@ insert into member (member_id, uuid, social_id, nickname, src, role, provider_ty
     (1, 'c2141f87-30d7-4d2e-a9ef-3eff99acd957', 'test@test.com', 'test_nickname','src', 'ROLE_ADMIN', 'kakao', false, current_timestamp, current_timestamp);
 
 insert into stadium (stadium_id, name, image, is_active) values
-    (1, '잠실 실내체육관', 'src', true);
+    (1, 'KSPO DOME(올림픽 체조경기장)', 'src', true),
+    (2, '잠실 실내체육관', 'src', false),
+    (3, '고척 스카이돔', 'src', false);
 
 insert into concert (concert_id, stadium_id, name, is_deleted) values
                                                                    (1, 1, 'TOMORROW X TOGETHER WORLD TOUR 〈ACT : SWEET MIRAGE〉 IN SEOUL', false),
