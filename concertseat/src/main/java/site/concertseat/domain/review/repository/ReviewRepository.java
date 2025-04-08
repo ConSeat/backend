@@ -33,4 +33,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "where r.seating.id = :seatingId " +
             "and r.isApproved = true")
     ReviewStatsDto findReviewStats(@Param("seatingId") Integer seatingId);
+
+    @Query("select count(*) " +
+            "from Review r " +
+            "where r.isApproved = true")
+    Long countApprovedReviews();
 }
