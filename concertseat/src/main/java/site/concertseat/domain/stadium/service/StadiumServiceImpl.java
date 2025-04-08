@@ -1,6 +1,7 @@
 package site.concertseat.domain.stadium.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.concertseat.domain.review.repository.FeatureRepository;
@@ -13,6 +14,7 @@ import site.concertseat.domain.stadium.entity.Section;
 import site.concertseat.domain.stadium.entity.Stadium;
 import site.concertseat.domain.stadium.repository.StadiumRepository;
 import site.concertseat.global.exception.CustomException;
+import site.concertseat.global.redis.RedisUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -24,15 +26,34 @@ import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StadiumServiceImpl implements StadiumService {
+    private static final String STADIUM_KEY = "stadium";
+    private static final String REVIEW_COUNT_KEY = "reviewCount";
     private final StadiumRepository stadiumRepository;
     private final FeatureRepository featureRepository;
     private final ObstructionRepository obstructionRepository;
     private final ReviewService reviewService;
+    private final RedisUtils redisUtils;
 
     @Override
     public StadiumListRes findStadiums() {
-        List<Stadium> stadiums = stadiumRepository.findAll();
-        Long totalReviewCount = reviewService.getTotalReviewCount();
+        List<Stadium> stadiums;
+        Long totalReviewCount;
+
+        Object stadiumList = redisUtils.getData(STADIUM_KEY);
+        if(stadiumList == null) {
+            stadiums = stadiumRepository.findAll();
+            redisUtils.setData("stadium", stadiums);
+        } else {
+            stadiums = (List<Stadium>) stadiumList;
+        }
+
+        Object reviewCount = redisUtils.getData(REVIEW_COUNT_KEY);
+        if(reviewCount == null) {
+            totalReviewCount = reviewService.getTotalReviewCount();
+            redisUtils.setData("reviewCount", totalReviewCount);
+        } else {
+            totalReviewCount = (Long) reviewCount;
+        }
 
         return new StadiumListRes(stadiums, totalReviewCount);
     }

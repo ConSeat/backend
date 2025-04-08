@@ -204,7 +204,6 @@ public class ReviewServiceImpl implements ReviewService {
         return new ImageUploadRes(imageUrls);
     }
 
-    @Cacheable(value = "reviewCount")
     @Override
     public Long getTotalReviewCount() {
         return reviewRepository.countApprovedReviews();
