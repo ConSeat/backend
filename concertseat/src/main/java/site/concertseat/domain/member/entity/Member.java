@@ -47,4 +47,12 @@ public class Member extends BaseEntity {
     private Role role;
 
     private String providerType;
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateSrc(String src) {
+        this.src = src;
+    }
 }
