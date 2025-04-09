@@ -4,6 +4,7 @@ import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import site.concertseat.domain.bookmark.dto.BookmarkStadiumDto;
 import site.concertseat.domain.bookmark.entity.Bookmark;
 import site.concertseat.domain.bookmark.entity.BookmarkId;
 import site.concertseat.domain.review.entity.Review;
@@ -11,7 +12,7 @@ import site.concertseat.domain.review.entity.Review;
 import java.util.List;
 
 @Repository
-public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId> {
+public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId>, BookmarkRepositoryCustom {
     @Query("select b " +
             "from Bookmark b " +
             "where b.review in :reviews " +
@@ -22,4 +23,11 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId> 
             "from Bookmark b " +
             "where b.member.id = :memberId")
     Long countBookmarkByMemberId(@Param("memberId") Long memberId);
+
+    @Query("select distinct new site.concertseat.domain.bookmark.dto.BookmarkStadiumDto(" +
+            "b.review.concert.stadium.id," +
+            "b.review.concert.stadium.name) " +
+            "from Bookmark b " +
+            "where b.member.id = :memberId")
+    List<BookmarkStadiumDto> findStadiums(@Param("memberId") Long memberId);
 }
