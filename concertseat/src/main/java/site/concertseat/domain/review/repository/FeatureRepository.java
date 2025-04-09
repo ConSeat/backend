@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import site.concertseat.domain.review.entity.Feature;
-import site.concertseat.domain.review.entity.Review;
 import site.concertseat.domain.review.entity.ReviewFeature;
 import site.concertseat.domain.review.entity.ReviewFeatureId;
 
@@ -22,8 +21,8 @@ public interface FeatureRepository extends JpaRepository<ReviewFeature, ReviewFe
     @EntityGraph(attributePaths = "feature")
     @Query("select rf " +
             "from ReviewFeature rf " +
-            "where rf.review in :reviews")
-    List<ReviewFeature> findReviewFeatures(@Param("reviews") List<Review> reviews);
+            "where rf.review.id in :reviews")
+    List<ReviewFeature> findReviewFeatures(@Param("reviews") List<Long> reviews);
 
     @Query("select f " +
             "from Feature f")
