@@ -2,21 +2,20 @@ package site.concertseat.domain.review.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.review.dto.ImageUploadRes;
-import site.concertseat.domain.review.dto.ReviewPostReq;
-import site.concertseat.domain.review.dto.ReviewSearchRes;
+import site.concertseat.domain.review.dto.*;
 import site.concertseat.domain.review.service.ReviewService;
 import site.concertseat.global.argument_resolver.LoginMember;
 import site.concertseat.global.dto.ResponseDto;
-import site.concertseat.global.jwt.service.JwtUtils;
-import site.concertseat.global.s3.S3Service;
 
 import java.io.IOException;
 import java.util.List;
 
+import static org.springframework.data.domain.Sort.Direction.DESC;
 import static site.concertseat.global.statuscode.SuccessCode.CREATED;
 import static site.concertseat.global.statuscode.SuccessCode.OK;
 
@@ -32,6 +31,17 @@ public class ReviewController {
         ReviewSearchRes res = reviewService.searchReview(member, seatingId);
 
         return ResponseDto.success(OK, res);
+    }
+
+    @GetMapping("/seating/{seatingId}/list")
+    public ResponseDto<ReviewListRes> reviewList(@LoginMember Member member,
+                                                 @PathVariable Integer seatingId,
+                                                 @ModelAttribute ReviewListReq reviewListReq,
+                                                 @PageableDefault(size = 3, sort = "likesCount", direction = DESC)
+                                                     Pageable pageable) {
+        ReviewListRes result = reviewService.findReviews(member, seatingId, reviewListReq, pageable);
+
+        return ResponseDto.success(OK, result);
     }
 
     @PostMapping("/concerts/{concertId}/seating/{seatingId}")
