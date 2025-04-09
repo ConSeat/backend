@@ -16,4 +16,6 @@ public interface ReviewService {
     ReviewListRes findReviews(Member member, Integer seatingId, ReviewListReq reviewListReq, Pageable pageable);
 
     ImageUploadRes uploadImage(Member member, List<MultipartFile> file) throws IOException;
+
+    Long getTotalReviewCount();
 }

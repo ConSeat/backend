@@ -60,7 +60,8 @@ insert into feature (feature_id, name) values
                                            (6, '통로'),
                                            (7, '의탠딩'),
                                            (8, '스탠딩'),
-                                           (9, '시제석');
+                                           (9, '시제석'),
+                                           (10, '없음');
 
 insert into obstruction (obstruction_id, name) values
                                                    (1, '카메라에 가려요'),
@@ -68,3 +69,7 @@ insert into obstruction (obstruction_id, name) values
                                                    (3, '단차가 있어요'),
                                                    (4, '스피커에 가려요'),
                                                    (5, '없음');
+
+insert into review (review_id, member_id, seating_id, concert_id, contents, thumbnail,
+                    stage_distance, thrust_stage_distance, screen_distance, is_approved, created_at, modified_at, is_deleted) values
+     (1, 1, 1, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false)
