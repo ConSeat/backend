@@ -778,7 +778,7 @@ public class ReviewControllerTest {
 
         List<Integer> features = new ArrayList<>();
         features.add(3);
-        features.add(10);
+        features.add(100);
 
         List<Integer> obstructions = new ArrayList<>();
         obstructions.add(1);

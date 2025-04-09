@@ -60,7 +60,8 @@ insert into feature (feature_id, name) values
                                            (6, '통로'),
                                            (7, '의탠딩'),
                                            (8, '스탠딩'),
-                                           (9, '시제석');
+                                           (9, '시제석'),
+                                           (10, '없음');
 
 insert into obstruction (obstruction_id, name) values
                                                    (1, '카메라에 가려요'),
