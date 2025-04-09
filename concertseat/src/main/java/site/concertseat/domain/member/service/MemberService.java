@@ -10,5 +10,5 @@ import java.io.IOException;
 public interface MemberService {
     MemberSearchRes searchMember(Member member);
 
-    MemberModifyRes modifyMember(Member member, MemberModifyReq memberModifyReq) throws IOException;
+    MemberModifyRes modifyMember(Member member, MemberModifyReq memberModifyReq);
 }

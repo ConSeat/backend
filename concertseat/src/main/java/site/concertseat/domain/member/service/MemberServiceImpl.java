@@ -13,8 +13,6 @@ import site.concertseat.domain.member.repository.MemberRepository;
 import site.concertseat.domain.review.repository.ReviewRepository;
 import site.concertseat.global.s3.S3Service;
 
-import java.io.IOException;
-
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -35,13 +33,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     @Transactional
-    public MemberModifyRes modifyMember(Member member, MemberModifyReq memberModifyReq) throws IOException{
+    public MemberModifyRes modifyMember(Member member, MemberModifyReq memberModifyReq) {
         updateMember(member, memberModifyReq);
 
         return new MemberModifyRes(member.getNickname(), member.getSrc());
     }
 
-    private void updateMember(Member member, MemberModifyReq memberModifyReq) throws IOException {
+    private void updateMember(Member member, MemberModifyReq memberModifyReq) {
         if(memberModifyReq.getNickname() != null) {
             member.updateNickname(memberModifyReq.getNickname());
         }

@@ -31,7 +31,7 @@ public class MemberController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseDto<MemberModifyRes> memberModify(@LoginMember Member member,
-                                                      @Valid @ModelAttribute MemberModifyReq memberModifyReq) throws IOException {
+                                                      @Valid @ModelAttribute MemberModifyReq memberModifyReq) {
         MemberModifyRes res = memberService.modifyMember(member, memberModifyReq);
 
         return ResponseDto.success(OK, res);
