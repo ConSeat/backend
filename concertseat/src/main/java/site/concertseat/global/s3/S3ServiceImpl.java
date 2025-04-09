@@ -39,7 +39,7 @@ public class S3ServiceImpl implements S3Service {
     private String bucketUrl;
 
     @Override
-    public String upload(MultipartFile multipartFile, String dirName, int order) throws IOException {
+    public String upload(MultipartFile multipartFile, String dirName, int order) {
         if (multipartFile.isEmpty() || Objects.isNull(multipartFile.getOriginalFilename())) {
             throw new CustomException(FILE_UPLOAD_FAIL);
         }
@@ -56,8 +56,12 @@ public class S3ServiceImpl implements S3Service {
         return uploadFile(content, s3FileName, "image/" + extension);
     }
 
-    private byte[] convertToByte(MultipartFile multipartFile) throws IOException {
-        return multipartFile.getBytes();
+    private byte[] convertToByte(MultipartFile multipartFile) {
+        try {
+            return multipartFile.getBytes();
+        } catch (IOException e) {
+            throw new CustomException(FILE_UPLOAD_FAIL);
+        }
     }
 
     private String convertS3Name(String dirName, String extension, int order) {
@@ -65,7 +69,7 @@ public class S3ServiceImpl implements S3Service {
                 dirName, convertToTime(LocalDateTime.now()), order, extension);
     }
 
-    private String uploadFile(byte[] content, String s3FileName, String contentType) throws IOException {
+    private String uploadFile(byte[] content, String s3FileName, String contentType) {
         ObjectMetadata objectMetadata = new ObjectMetadata();
         objectMetadata.setContentType(contentType);
         objectMetadata.setContentLength(content.length);
@@ -190,8 +194,6 @@ public class S3ServiceImpl implements S3Service {
                 listObjectsRequest.setContinuationToken(result.getNextContinuationToken());
             } while (result.isTruncated());
 
-        } catch (AmazonServiceException e) {
-            throw new CustomException(FILE_DELETE_FAIL);
         } catch (Exception e) {
             throw new CustomException(FILE_DELETE_FAIL);
         }

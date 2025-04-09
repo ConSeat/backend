@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface S3Service {
-    String upload(MultipartFile multipartFile, String dirName, int order) throws IOException;
+    String upload(MultipartFile multipartFile, String dirName, int order);
 
     List<String> uploadMultipleFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException;
 
