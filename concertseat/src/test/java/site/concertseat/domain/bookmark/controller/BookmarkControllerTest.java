@@ -106,7 +106,7 @@ public class BookmarkControllerTest {
         Integer stadiumId = 1;
         LocalDateTime now = LocalDateTime.now().minusMinutes(5);
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
         String lastModifiedAt = now.format(formatter);
 
         //when

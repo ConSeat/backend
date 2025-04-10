@@ -11,6 +11,6 @@ public class BookmarkReviewSearchReq {
     @NotNull
     private Integer stadiumId;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss.SSS")
     private LocalDateTime lastModifiedAt;
 }
