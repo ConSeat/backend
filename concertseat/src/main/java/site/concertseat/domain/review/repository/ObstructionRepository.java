@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import site.concertseat.domain.review.entity.Obstruction;
-import site.concertseat.domain.review.entity.Review;
 import site.concertseat.domain.review.entity.ReviewObstruction;
 import site.concertseat.domain.review.entity.ReviewObstructionId;
 
@@ -22,8 +21,8 @@ public interface ObstructionRepository extends JpaRepository<ReviewObstruction, 
     @EntityGraph(attributePaths = "obstruction")
     @Query("select ro " +
             "from ReviewObstruction ro " +
-            "where ro.review in :reviews")
-    List<ReviewObstruction> findReviewObstruction(@Param("reviews") List<Review> reviews);
+            "where ro.review.id in :reviews")
+    List<ReviewObstruction> findReviewObstruction(@Param("reviews") List<Long> reviews);
 
     @Query("select o " +
             "from Obstruction o")

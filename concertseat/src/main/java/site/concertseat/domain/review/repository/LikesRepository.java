@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import site.concertseat.domain.review.entity.Likes;
 import site.concertseat.domain.review.entity.LikesId;
-import site.concertseat.domain.review.entity.Review;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public interface LikesRepository extends JpaRepository<Likes, LikesId> {
     @Query("select l " +
             "from Likes l " +
-            "where l.review in :reviews " +
+            "where l.review.id in :reviews " +
             "and l.member.id = :memberId")
-    List<Likes> findLikesByReviewsAndMemberId(@Param("reviews") List<Review> reviews, @Param("memberId") Long memberId);
+    List<Likes> findLikesByReviewsAndMemberId(@Param("reviews") List<Long> reviews, @Param("memberId") Long memberId);
 }

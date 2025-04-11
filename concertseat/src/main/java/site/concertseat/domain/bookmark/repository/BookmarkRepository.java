@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import site.concertseat.domain.bookmark.entity.Bookmark;
 import site.concertseat.domain.bookmark.entity.BookmarkId;
-import site.concertseat.domain.review.entity.Review;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
 public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId> {
     @Query("select b " +
             "from Bookmark b " +
-            "where b.review in :reviews " +
+            "where b.review.id in :reviews " +
             "and b.member.id = :memberId")
     List<Bookmark> findBookmarkByReviewsAndMemberId(@Param("reviews") List<Review> reviews, @Param("memberId") Long memberId);
 
