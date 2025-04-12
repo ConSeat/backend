@@ -7,7 +7,10 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.review.dto.*;
+import site.concertseat.domain.review.dto.req.MyReviewSearchReq;
+import site.concertseat.domain.review.dto.req.ReviewListReq;
+import site.concertseat.domain.review.dto.req.ReviewPostReq;
+import site.concertseat.domain.review.dto.res.*;
 import site.concertseat.domain.review.service.ReviewService;
 import site.concertseat.global.argument_resolver.LoginMember;
 import site.concertseat.global.dto.ResponseDto;
@@ -60,5 +63,21 @@ public class ReviewController {
         ImageUploadRes res = reviewService.uploadImage(member, files);
 
         return ResponseDto.success(CREATED, res);
+    }
+
+    @GetMapping("/stadiums")
+    public ResponseDto<MyReviewStadiumListRes> myReviewStadiumList(@LoginMember Member member) {
+        MyReviewStadiumListRes res = reviewService.findStadium(member);
+
+        return ResponseDto.success(OK, res);
+    }
+
+    @GetMapping
+    public ResponseDto<MyReviewSearchRes> myReviewSearch(@LoginMember Member member,
+                                                                     @Valid @ModelAttribute MyReviewSearchReq req,
+                                                                     @PageableDefault(size = 9) Pageable pageable) {
+        MyReviewSearchRes res = reviewService.searchMyReview(member, req, pageable);
+
+        return ResponseDto.success(OK, res);
     }
 }
