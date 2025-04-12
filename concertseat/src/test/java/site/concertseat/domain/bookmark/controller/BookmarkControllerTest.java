@@ -140,14 +140,14 @@ public class BookmarkControllerTest {
                                                 parameterWithName("stadiumId")
                                                         .description("경기장 아이디"),
                                                 parameterWithName("lastModifiedAt")
-                                                        .description("마지막 수정 일자(yyyy-MM-dd HH:mm:ss)")
+                                                        .description("마지막 수정 일자(yyyy-MM-dd HH:mm:ss.SSS)")
                                                         .optional()
                                         )
                                 )
                                 .responseFields(
                                         getCommonResponseFields(
                                                 fieldWithPath("body.reviews.content[].reviewId").type(NUMBER)
-                                                        .description("경기장 아이디"),
+                                                        .description("리뷰 아이디"),
                                                 fieldWithPath("body.reviews.content[].thumbnailUrl").type(STRING)
                                                         .description("대표 이미지 url"),
                                                 fieldWithPath("body.reviews.content[].floorName").type(STRING)
@@ -212,7 +212,7 @@ public class BookmarkControllerTest {
                                 .queryParameters(
                                         List.of(
                                                 parameterWithName("lastModifiedAt")
-                                                        .description("마지막 수정 일자(yyyy-MM-dd HH:mm:ss)")
+                                                        .description("마지막 수정 일자(yyyy-MM-dd HH:mm:ss.SSS)")
                                                         .optional()
                                         )
                                 )
