@@ -1,6 +1,9 @@
-package site.concertseat.domain.review.dto;
+package site.concertseat.domain.review.dto.res;
 
 import lombok.Data;
+import site.concertseat.domain.review.dto.ReviewDto;
+import site.concertseat.domain.review.dto.ReviewStatsDto;
+import site.concertseat.domain.review.dto.ReviewWithLikesCount;
 import site.concertseat.domain.review.entity.*;
 
 import java.util.ArrayList;
