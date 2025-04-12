@@ -1,6 +1,5 @@
 package site.concertseat.domain.stadium.controller;
 
-
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import org.junit.jupiter.api.Test;

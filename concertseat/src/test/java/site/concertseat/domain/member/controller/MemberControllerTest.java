@@ -18,10 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import site.concertseat.domain.member.enums.Role;
 import site.concertseat.global.jwt.service.JwtUtils;
 
-import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
-import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
@@ -80,7 +78,7 @@ public class MemberControllerTest {
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Member API")
-                                .summary("콘서트 리뷰 등록 API")
+                                .summary("내 정보 조회 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")
                                                 .description("JWT 토큰")
