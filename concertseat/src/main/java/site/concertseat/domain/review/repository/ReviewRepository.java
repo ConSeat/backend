@@ -5,24 +5,28 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import site.concertseat.domain.review.dto.MyReviewStadiumDto;
 import site.concertseat.domain.review.dto.ReviewStatsDto;
 import site.concertseat.domain.review.dto.ReviewWithLikesCount;
 import site.concertseat.domain.review.entity.Review;
+import site.concertseat.domain.review.enums.ReviewStatus;
 
 import java.util.List;
 
 @Repository
-public interface ReviewRepository extends JpaRepository<Review, Long> {
+public interface ReviewRepository extends JpaRepository<Review, Long>, CustomReviewRepository {
     @Query("select new site.concertseat.domain.review.dto.ReviewWithLikesCount(r, count(l)) " +
             "from Review r " +
             "join fetch r.member m " +
             "join fetch r.concert c " +
             "left join Likes l on l.review = r " +
             "where r.seating.id = :seatingId " +
-            "and r.isApproved = true " +
+            "and r.status = :status " +
             "group by r " +
             "order by count(l) desc, r.createdAt desc")
-    List<ReviewWithLikesCount> findReviewsBySeatingId(@Param("seatingId") Integer seatingId, Pageable pageable);
+    List<ReviewWithLikesCount> findReviewsBySeatingId(@Param("seatingId") Integer seatingId,
+                                                      @Param("status") ReviewStatus status,
+                                                      Pageable pageable);
 
     @Query("select new site.concertseat.domain.review.dto.ReviewStatsDto( " +
             "   avg(r.stageDistance), " +
@@ -31,16 +35,24 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "   count(r)) " +
             "from Review r " +
             "where r.seating.id = :seatingId " +
-            "and r.isApproved = true")
-    ReviewStatsDto findReviewStats(@Param("seatingId") Integer seatingId);
+            "and r.status = :status")
+    ReviewStatsDto findReviewStats(@Param("seatingId") Integer seatingId,
+                                   @Param("status") ReviewStatus status);
 
     @Query("select count(r) " +
             "from Review r " +
-            "where r.isApproved = true")
-    Long countApprovedReviews();
+            "where r.status = :status")
+    Long countApprovedReviews(@Param("status") ReviewStatus status);
 
     @Query("select count(r) " +
             "from Review r " +
             "where r.member.id = :memberId")
     Long countMemberReviews(@Param("memberId") Long memberId);
+
+    @Query("select distinct new site.concertseat.domain.review.dto.MyReviewStadiumDto(" +
+            "r.concert.stadium.id," +
+            "r.concert.stadium.name) " +
+            "from Review r " +
+            "where r.member.id = :memberId")
+    List<MyReviewStadiumDto> findStadiumByMemberId(@Param("memberId") Long memberId);
 }
