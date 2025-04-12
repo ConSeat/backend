@@ -16,7 +16,7 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId>,
             "from Bookmark b " +
             "where b.review.id in :reviews " +
             "and b.member.id = :memberId")
-    List<Bookmark> findBookmarkByReviewsAndMemberId(@Param("reviews") List<Review> reviews, @Param("memberId") Long memberId);
+    List<Bookmark> findBookmarkByReviewsAndMemberId(@Param("reviews") List<Long> reviews, @Param("memberId") Long memberId);
 
     @Query("select count(b) " +
             "from Bookmark b " +
