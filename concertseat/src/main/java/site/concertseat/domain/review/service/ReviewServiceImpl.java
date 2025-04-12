@@ -1,7 +1,6 @@
 package site.concertseat.domain.review.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -14,6 +13,10 @@ import site.concertseat.domain.concert.entity.Concert;
 import site.concertseat.domain.concert.repository.ConcertRepository;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.dto.*;
+import site.concertseat.domain.review.dto.req.MyReviewSearchReq;
+import site.concertseat.domain.review.dto.req.ReviewListReq;
+import site.concertseat.domain.review.dto.req.ReviewPostReq;
+import site.concertseat.domain.review.dto.res.*;
 import site.concertseat.domain.review.entity.*;
 import site.concertseat.domain.review.enums.Distance;
 import site.concertseat.domain.review.repository.*;
@@ -28,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static site.concertseat.domain.review.enums.ReviewStatus.APPROVED;
 import static site.concertseat.global.statuscode.ErrorCode.BAD_REQUEST;
 import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 
@@ -36,7 +40,6 @@ import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 @RequiredArgsConstructor
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
-    private final CustomReviewRepository customReviewRepository;
     private final SeatingRepository seatingRepository;
     private final ConcertRepository concertRepository;
     private final ObstructionRepository obstructionRepository;
@@ -135,14 +138,14 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewSearchRes searchReview(Member member, Integer seatingId) {
-        ReviewStatsDto reviewStats = reviewRepository.findReviewStats(seatingId);
+        ReviewStatsDto reviewStats = reviewRepository.findReviewStats(seatingId, APPROVED);
 
         if (reviewStats.getReviewCount() == 0) {
             throw new CustomException(NOT_FOUND);
         }
 
         List<ReviewWithLikesCount> reviewsWithLikesCount = reviewRepository
-                .findReviewsBySeatingId(seatingId, Pageable.ofSize(3));
+                .findReviewsBySeatingId(seatingId, APPROVED, Pageable.ofSize(3));
 
         List<Review> reviews = reviewsWithLikesCount.stream()
                 .map(ReviewWithLikesCount::getReview).toList();
@@ -161,7 +164,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewListRes findReviews(Member member, Integer seatingId, ReviewListReq reviewListReq, Pageable pageable) {
-        Slice<ReviewDto> reviews = customReviewRepository.findReviews(reviewListReq, seatingId, pageable);
+        Slice<ReviewDto> reviews = reviewRepository.findReviews(reviewListReq, seatingId, pageable);
         List<Long> reviewIds = reviews.getContent().stream().map(ReviewDto::getReviewId).toList();
 
         setImages(reviewIds, reviews.getContent());
@@ -245,6 +248,22 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public Long getTotalReviewCount() {
-        return reviewRepository.countApprovedReviews();
+        return reviewRepository.countApprovedReviews(APPROVED);
+    }
+
+    @Override
+    public MyReviewStadiumListRes findStadium(Member member) {
+        List<MyReviewStadiumDto> stadiums = reviewRepository.findStadiumByMemberId(member.getId());
+
+        return new MyReviewStadiumListRes(stadiums);
+    }
+
+    @Override
+    public MyReviewSearchRes searchMyReview(Member member, MyReviewSearchReq req, Pageable pageable) {
+        Slice<MyReviewDto> reviewDtoList = reviewRepository.findMyReviews(member.getId(), req, pageable);
+
+        SliceDto<MyReviewDto> reviewList = new SliceDto<>(reviewDtoList);
+
+        return new MyReviewSearchRes(reviewList);
     }
 }
