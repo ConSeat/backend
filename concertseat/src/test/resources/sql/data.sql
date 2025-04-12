@@ -71,20 +71,20 @@ insert into obstruction (obstruction_id, name) values
    (5, '없음');
 
 insert into review (review_id, member_id, seating_id, concert_id, contents, thumbnail,
-                    stage_distance, thrust_stage_distance, screen_distance, is_approved, created_at, modified_at, is_deleted) values
-  (1, 1, 1, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (2, 1, 2, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (3, 1, 3, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (4, 1, 4, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (5, 1, 4, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (6, 1, 5, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (7, 1, 5, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (8, 1, 6, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (9, 1, 6, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (10, 1, 7, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (11, 1, 7, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (12, 1, 7, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false),
-  (13, 1, 8, 1, '테스트', 'src', 1, 1, 1, true, current_timestamp, current_timestamp, false);
+                    stage_distance, thrust_stage_distance, screen_distance, status, created_at, modified_at, is_deleted) values
+  (1, 1, 1, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (2, 1, 2, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (3, 1, 3, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (4, 1, 4, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (5, 1, 4, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (6, 1, 5, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (7, 1, 5, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (8, 1, 6, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (9, 1, 6, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (10, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (11, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (12, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (13, 1, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false);
 
 insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) values
     (1, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -20, CURRENT_TIMESTAMP), false),
