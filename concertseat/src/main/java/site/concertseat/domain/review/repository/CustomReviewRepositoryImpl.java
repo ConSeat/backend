@@ -2,6 +2,7 @@ package site.concertseat.domain.review.repository;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -10,18 +11,26 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.stereotype.Repository;
+import site.concertseat.domain.review.dto.MyReviewDto;
 import site.concertseat.domain.review.dto.ReviewDto;
-import site.concertseat.domain.review.dto.ReviewListReq;
+import site.concertseat.domain.review.dto.req.MyReviewSearchReq;
+import site.concertseat.domain.review.dto.req.ReviewListReq;
 import site.concertseat.domain.review.dto.ReviewWithLikesCount;
 import site.concertseat.domain.review.entity.Review;
 import site.concertseat.global.exception.CustomException;
 
 import java.util.List;
 
+import static site.concertseat.domain.member.entity.QMember.member;
 import static site.concertseat.domain.review.entity.QLikes.likes;
 import static site.concertseat.domain.review.entity.QReview.review;
 import static site.concertseat.domain.review.entity.QReviewFeature.reviewFeature;
 import static site.concertseat.domain.review.entity.QReviewObstruction.reviewObstruction;
+import static site.concertseat.domain.review.enums.ReviewStatus.APPROVED;
+import static site.concertseat.domain.stadium.entity.QFloor.floor;
+import static site.concertseat.domain.stadium.entity.QSeating.seating;
+import static site.concertseat.domain.stadium.entity.QSection.section;
+import static site.concertseat.domain.stadium.entity.QStadium.stadium;
 import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 
 @Repository
@@ -35,7 +44,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
                 .select(review, likes.count())
                 .from(review)
                 .where(review.seating.id.eq(seatingId)
-                        .and(review.isApproved.eq(true)))
+                        .and(review.status.eq(APPROVED)))
                 .join(review.member).fetchJoin()
                 .leftJoin(likes)
                 .on(likes.review.id.eq(review.id))
@@ -152,5 +161,40 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
         booleanBuilder.and(reviewObstruction.countDistinct().eq((long) obstructions.size()));
 
         return booleanBuilder;
+    }
+
+    @Override
+    public Slice<MyReviewDto> findMyReviews(Long memberId, MyReviewSearchReq req, Pageable pageable) {
+        BooleanBuilder where = new BooleanBuilder();
+
+        if (req.getLastReviewId() != null) {
+            where.and(review.id.lt(req.getLastReviewId()));
+        }
+
+        List<MyReviewDto> reviews = queryFactory.select(
+                        Projections.constructor(MyReviewDto.class,
+                                review.id,
+                                review.thumbnail,
+                                floor.name,
+                                section.name,
+                                seating.name,
+                                review.status))
+                .from(review)
+                .join(review.member, member)
+                .join(review.seating, seating)
+                .join(seating.section, section)
+                .join(section.floor, floor)
+                .join(floor.stadium, stadium)
+                .where(member.id.eq(memberId))
+                .where(stadium.id.eq(req.getStadiumId()))
+                .where(where)
+                .orderBy(review.id.desc())
+                .limit(pageable.getPageSize() + 1)
+                .fetch();
+
+        boolean hasNext = reviews.size() > pageable.getPageSize();
+        if (hasNext) reviews.remove(reviews.size() - 1);
+
+        return new SliceImpl<>(reviews, pageable, hasNext);
     }
 }

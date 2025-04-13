@@ -3,7 +3,10 @@ package site.concertseat.domain.review.service;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 import site.concertseat.domain.member.entity.Member;
-import site.concertseat.domain.review.dto.*;
+import site.concertseat.domain.review.dto.req.MyReviewSearchReq;
+import site.concertseat.domain.review.dto.req.ReviewListReq;
+import site.concertseat.domain.review.dto.req.ReviewPostReq;
+import site.concertseat.domain.review.dto.res.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -18,4 +21,8 @@ public interface ReviewService {
     ImageUploadRes uploadImage(Member member, List<MultipartFile> file) throws IOException;
 
     Long getTotalReviewCount();
+
+    MyReviewStadiumListRes findStadium(Member member);
+
+    MyReviewSearchRes searchMyReview(Member member, MyReviewSearchReq req, Pageable pageable);
 }

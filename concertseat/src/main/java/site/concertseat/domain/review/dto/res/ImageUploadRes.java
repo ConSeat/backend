@@ -1,4 +1,4 @@
-package site.concertseat.domain.review.dto;
+package site.concertseat.domain.review.dto.res;
 
 import lombok.Data;
 

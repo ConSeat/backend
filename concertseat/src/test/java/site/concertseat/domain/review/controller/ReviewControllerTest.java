@@ -17,18 +17,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 import site.concertseat.domain.member.enums.Role;
-import site.concertseat.domain.review.dto.ReviewPostReq;
+import site.concertseat.domain.review.dto.req.ReviewPostReq;
 import site.concertseat.global.jwt.service.JwtUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.epages.restdocs.apispec.MockMvcRestDocumentationWrapper.document;
+import static com.epages.restdocs.apispec.ResourceDocumentation.parameterWithName;
 import static com.epages.restdocs.apispec.ResourceDocumentation.resource;
 import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes.*;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.multipart;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static site.concertseat.global.statuscode.ErrorCode.*;
 import static site.concertseat.global.statuscode.SuccessCode.CREATED;
+import static site.concertseat.global.statuscode.SuccessCode.OK;
 import static site.concertseat.utils.ResponseFieldUtils.getCommonResponseFields;
 
 @Transactional
@@ -1061,6 +1063,173 @@ public class ReviewControllerTest {
                                 )
                                 .requestSchema(Schema.schema("이미지 업로드 Request"))
                                 .responseSchema(Schema.schema("이미지 업로드 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 내_후기_경기장_리스트_조회_성공() throws Exception {
+        // given
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews/stadiums")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "내 후기 경기장 리스트 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("내 후기 경기장 리스트 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.stadiums[].stadiumId").type(STRING)
+                                                        .description("경기장 아이디"),
+                                                fieldWithPath("body.stadiums[].stadiumName").type(STRING)
+                                                        .description("경기장 이름")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("내 후기 경기장 리스트 조회 Request"))
+                                .responseSchema(Schema.schema("내 후기 경기장 리스트 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 내_후기_목록_조회_성공() throws Exception {
+        //given
+        Integer stadiumId = 1;
+        Long lastReviewId = 10L;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews")
+                        .param("stadiumId", String.valueOf(stadiumId))
+                        .param("lastReviewId", String.valueOf(lastReviewId))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "내 후기 목록 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("내 후기 목록 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .queryParameters(
+                                        List.of(
+                                                parameterWithName("stadiumId")
+                                                        .description("경기장 아이디"),
+                                                parameterWithName("lastReviewId")
+                                                        .description("마지막 리뷰 아이디")
+                                                        .optional()
+                                        )
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.reviews.content[].reviewId").type(NUMBER)
+                                                        .description("리뷰 아이디"),
+                                                fieldWithPath("body.reviews.content[].thumbnailUrl").type(STRING)
+                                                        .description("대표 이미지 url"),
+                                                fieldWithPath("body.reviews.content[].floorName").type(STRING)
+                                                        .description("층 이름"),
+                                                fieldWithPath("body.reviews.content[].sectionName").type(STRING)
+                                                        .description("구역 이름"),
+                                                fieldWithPath("body.reviews.content[].seatingName").type(STRING)
+                                                        .description("열 이름"),
+                                                fieldWithPath("body.reviews.content[].status").type(STRING)
+                                                        .description("리뷰 상태"),
+                                                fieldWithPath("body.reviews.sliceNumber").type(NUMBER)
+                                                        .description("현재 페이지 숫자"),
+                                                fieldWithPath("body.reviews.size").type(NUMBER)
+                                                        .description("페이지 개수"),
+                                                fieldWithPath("body.reviews.hasNext").type(BOOLEAN)
+                                                        .description("다음 페이지 존재 유무"),
+                                                fieldWithPath("body.reviews.numberOfElements").type(NUMBER)
+                                                        .description("contents 배열 사이즈")
+
+                                        )
+                                )
+                                .requestSchema(Schema.schema("내 후기 목록 조회 Request"))
+                                .responseSchema(Schema.schema("내 후기 목록 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 내_후기_목록_조회_실패_비어있는_경기장_아이디() throws Exception {
+        //given
+        Long lastReviewId = 10L;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews")
+                        .param("lastReviewId", String.valueOf(lastReviewId))
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.header.message").value(INVALID_ARGUMENT.getMessage()))
+                .andDo(document(
+                        "내 후기 목록 조회 실패 - 비어있는 경기장 아이디",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("내 후기 목록 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .queryParameters(
+                                        List.of(
+                                                parameterWithName("lastReviewId")
+                                                        .description("마지막 리뷰 아이디")
+                                                        .optional()
+                                        )
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body").type(NULL)
+                                                        .description("내용 없음")
+
+                                        )
+                                )
+                                .requestSchema(Schema.schema("내 후기 목록 조회 Request"))
+                                .responseSchema(Schema.schema("내 후기 목록 조회 Response"))
                                 .build()
                         ))
                 );

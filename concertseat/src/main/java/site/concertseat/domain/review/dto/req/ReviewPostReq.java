@@ -1,7 +1,6 @@
-package site.concertseat.domain.review.dto;
+package site.concertseat.domain.review.dto.req;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -9,6 +8,7 @@ import site.concertseat.domain.concert.entity.Concert;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.entity.Review;
 import site.concertseat.domain.review.enums.Distance;
+import site.concertseat.domain.review.enums.ReviewStatus;
 import site.concertseat.domain.stadium.entity.Seating;
 
 import java.util.List;
@@ -47,7 +47,7 @@ public class ReviewPostReq {
                 .stageDistance(Distance.valueOf(screenDistance.toUpperCase()))
                 .thrustStageDistance(Distance.valueOf(thrustStageDistance.toUpperCase()))
                 .screenDistance(Distance.valueOf(screenDistance.toUpperCase()))
-                .isApproved(false)
+                .status(ReviewStatus.WAITING)
                 .build();
     }
 }
