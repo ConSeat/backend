@@ -33,6 +33,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWit
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static site.concertseat.global.statuscode.ErrorCode.INVALID_ARGUMENT;
+import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 import static site.concertseat.global.statuscode.SuccessCode.OK;
 import static site.concertseat.utils.ResponseFieldUtils.getCommonResponseFields;
 
@@ -225,6 +226,164 @@ public class BookmarkControllerTest {
                                 )
                                 .requestSchema(Schema.schema("관심 시야 목록 조회 Request"))
                                 .responseSchema(Schema.schema("관심 시야 목록 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 관람_시야_상세_조회_성공() throws Exception {
+        //given
+        Long reviewId = 1L;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/members/bookmarks/{reviewId}", reviewId)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "관람 시야 상세 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Member API")
+                                .summary("관심 시야 목록 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .pathParameters(
+                                        parameterWithName("reviewId")
+                                                .description("리뷰 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.reviewId").type(NUMBER)
+                                                        .description("리뷰 아이디"),
+                                                fieldWithPath("body.writerNickname").type(STRING)
+                                                        .description("작성자 닉네임"),
+                                                fieldWithPath("body.writerSrc").type(STRING)
+                                                        .description("작성자 프로필 url"),
+                                                fieldWithPath("body.concertName").type(STRING)
+                                                        .description("콘서트 이름"),
+                                                fieldWithPath("body.images[]").type(STRING)
+                                                        .description("이미지 url 리스트"),
+                                                fieldWithPath("body.contents").type(STRING)
+                                                        .description("후기 내용"),
+                                                fieldWithPath("body.createdAt").type(STRING)
+                                                        .description("작성 일자"),
+                                                fieldWithPath("body.features[]").type(STRING)
+                                                        .description("시야 특징"),
+                                                fieldWithPath("body.obstructions[]").type(STRING)
+                                                        .description("시야 방해요소"),
+                                                fieldWithPath("body.isBookmarked").type(BOOLEAN)
+                                                        .description("북마크 여부")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("관심 시야 상세 조회 Request"))
+                                .responseSchema(Schema.schema("관심 시야 상세 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 관심_시야_상세_조회_실패_없는_리뷰_아이디() throws Exception {
+        //given
+        Long reviewId = 10001L;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/members/bookmarks/{reviewId}", reviewId)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "관심 시야 상세 조회 실패 - 없는 리뷰 아이디",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Member API")
+                                .summary("관심 시야 상세 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .pathParameters(
+                                        parameterWithName("reviewId")
+                                                .description("리뷰 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body").type(NULL)
+                                                        .description("내용 없음")
+
+                                        )
+                                )
+                                .requestSchema(Schema.schema("관심 시야 상세 조회 Request"))
+                                .responseSchema(Schema.schema("관심 시야 상세 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 관심_시야_상세_조회_실패_누르지_않은_시야_후기() throws Exception {
+        //given
+        Long reviewId = 13L;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/members/bookmarks/{reviewId}", reviewId)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "관심 시야 상세 조회 실패 - 누르지 않은 시야 후기",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Member API")
+                                .summary("관심 시야 상세 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .pathParameters(
+                                        parameterWithName("reviewId")
+                                                .description("리뷰 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body").type(NULL)
+                                                        .description("내용 없음")
+
+                                        )
+                                )
+                                .requestSchema(Schema.schema("관심 시야 상세 조회 Request"))
+                                .responseSchema(Schema.schema("관심 시야 상세 조회 Response"))
                                 .build()
                         ))
                 );
