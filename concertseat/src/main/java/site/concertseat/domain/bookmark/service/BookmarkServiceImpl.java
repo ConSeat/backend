@@ -88,11 +88,8 @@ public class BookmarkServiceImpl implements BookmarkService {
     
     @Override
     public BookmarkReviewDetailRes reviewDetails(Member member, Long reviewId) {
-        ReviewDetailDto reviewDto = bookmarkRepository.findBookmarkReview(member.getId(), reviewId);
-
-        if(reviewDto == null) {
-            throw new CustomException(NOT_FOUND);
-        }
+        ReviewDetailDto reviewDto = bookmarkRepository.findBookmarkReview(member.getId(), reviewId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
 
         List<String> images = sightRepository.findByReviewId(reviewId);
         List<String> features = featureRepository.findFeatureByReviewId(reviewId);

@@ -97,4 +97,12 @@ public class ReviewController {
 
         return ResponseDto.success(DELETED);
     }
+
+    @GetMapping("/{reviewId}")
+    public ResponseDto<MyReviewDetailRes> myReviewDetail(@LoginMember Member member,
+                                                         @PathVariable Long reviewId) {
+        MyReviewDetailRes res = reviewService.myReviewDetails(member, reviewId);
+
+        return ResponseDto.success(OK, res);
+    }
 }

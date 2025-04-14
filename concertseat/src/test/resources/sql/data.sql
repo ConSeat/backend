@@ -1,5 +1,6 @@
 insert into member (member_id, uuid, social_id, nickname, src, role, provider_type, is_deleted, created_at, modified_at) values
-    (1, 'c2141f87-30d7-4d2e-a9ef-3eff99acd957', 'test@test.com', 'test_nickname','src', 'ROLE_ADMIN', 'kakao', false, current_timestamp, current_timestamp);
+    (1, 'c2141f87-30d7-4d2e-a9ef-3eff99acd957', 'test1@test.com', 'test_user1','src', 'ROLE_USER', 'kakao', false, current_timestamp, current_timestamp),
+    (2, 'c2141f87-30d7-4d2e-a9ef-3eff99acd958', 'test2@test.com', 'test_user2','src', 'ROLE_USER', 'kakao', false, current_timestamp, current_timestamp);
 
 insert into stadium (stadium_id, name, image, is_active) values
     (1, 'KSPO DOME(올림픽 체조경기장)', 'src', true),
@@ -84,7 +85,8 @@ insert into review (review_id, member_id, seating_id, concert_id, contents, thum
   (10, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
   (11, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
   (12, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
-  (13, 1, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false);
+  (13, 1, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (14, 2, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false);
 
 insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) values
     (1, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -20, CURRENT_TIMESTAMP), false),
