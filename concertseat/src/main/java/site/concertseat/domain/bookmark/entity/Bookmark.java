@@ -17,7 +17,6 @@ import site.concertseat.global.entity.BaseEntity;
 @AllArgsConstructor
 @Builder
 @SQLDelete(sql = "UPDATE bookmark SET is_deleted = true WHERE member_id = ? AND review_id = ?")
-@SQLRestriction("is_deleted = false")
 public class Bookmark extends BaseEntity {
     @EmbeddedId
     private BookmarkId bookmarkId;

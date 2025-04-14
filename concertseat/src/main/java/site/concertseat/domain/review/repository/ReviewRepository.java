@@ -12,6 +12,7 @@ import site.concertseat.domain.review.entity.Review;
 import site.concertseat.domain.review.enums.ReviewStatus;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long>, CustomReviewRepository {
@@ -55,4 +56,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
             "from Review r " +
             "where r.member.id = :memberId")
     List<MyReviewStadiumDto> findStadiumByMemberId(@Param("memberId") Long memberId);
+
+    @Query("select r " +
+            "from Review r " +
+            "where r.status = 'APPROVED' " +
+            "and r.id = :reviewId")
+    Optional<Review> findApprovedReview(@Param("reviewId") Long reviewId);
 }
