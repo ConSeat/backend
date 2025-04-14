@@ -4,11 +4,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import site.concertseat.domain.bookmark.dto.req.BookmarkReviewSearchReq;
+import site.concertseat.domain.bookmark.dto.res.BookmarkReviewDetailRes;
 import site.concertseat.domain.bookmark.dto.res.BookmarkReviewSearchRes;
 import site.concertseat.domain.bookmark.dto.res.BookmarkStadiumListRes;
 import site.concertseat.domain.bookmark.service.BookmarkService;
@@ -36,6 +34,14 @@ public class BookmarkController {
                                                                      @Valid @ModelAttribute BookmarkReviewSearchReq req,
                                                                      @PageableDefault(size = 9) Pageable pageable) {
         BookmarkReviewSearchRes res = bookmarkService.searchReview(member, req, pageable);
+
+        return ResponseDto.success(OK, res);
+    }
+
+    @GetMapping("/{reviewId}")
+    public ResponseDto<BookmarkReviewDetailRes> bookmarkReviewDetail(@LoginMember Member member,
+                                                                     @PathVariable Long reviewId) {
+        BookmarkReviewDetailRes res = bookmarkService.reviewDetails(member, reviewId);
 
         return ResponseDto.success(OK, res);
     }
