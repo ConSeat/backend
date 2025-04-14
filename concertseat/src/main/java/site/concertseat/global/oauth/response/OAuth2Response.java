@@ -18,7 +18,7 @@ public interface OAuth2Response {
                 .uuid(UUID.randomUUID().toString())
                 .socialId(getSocialId())
                 .nickname(getNickname())
-                .src("defaultImage")
+                .src("https://conseat.s3.ap-northeast-2.amazonaws.com/profile/default.png")
                 .role(ROLE_USER)
                 .providerType(getProvider())
                 .build();
