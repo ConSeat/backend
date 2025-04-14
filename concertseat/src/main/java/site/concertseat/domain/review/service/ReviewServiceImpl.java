@@ -27,6 +27,7 @@ import site.concertseat.global.exception.CustomException;
 import site.concertseat.global.s3.S3Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -182,7 +183,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.groupingBy(sight -> sight.getReview().getId()));
 
         for (ReviewDto review : reviewDto) {
-            List<Sight> reviewSights = sights.get(review.getReviewId());
+            List<Sight> reviewSights = sights.getOrDefault(review.getReviewId(), new ArrayList<>());
 
             review.setImages(reviewSights.stream().map(Sight::getCompressedImage).toList());
         }
@@ -194,7 +195,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.groupingBy(reviewFeature -> reviewFeature.getReview().getId()));
 
         for (ReviewDto review : reviewDto) {
-            List<String> reviewFeatures = features.get(review.getReviewId())
+            List<String> reviewFeatures = features.getOrDefault(review.getReviewId(), new ArrayList<>())
                     .stream()
                     .map(ReviewFeature::getFeature)
                     .map(Feature::getName)
@@ -210,7 +211,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.groupingBy(reviewObstruction -> reviewObstruction.getReview().getId()));
 
         for (ReviewDto review : reviewDto) {
-            List<String> reviewObstructions = obstructions.get(review.getReviewId())
+            List<String> reviewObstructions = obstructions.getOrDefault(review.getReviewId(), new ArrayList<>())
                     .stream()
                     .map(ReviewObstruction::getObstruction)
                     .map(Obstruction::getName)
@@ -277,5 +278,19 @@ public class ReviewServiceImpl implements ReviewService {
         List<String> obstructions = obstructionRepository.findObstructionByReviewId(reviewId);
 
         return new MyReviewDetailRes(reviewDto, images, features, obstructions);
+    }
+
+    @Override
+    @Transactional
+    public void addLike(Member member, Long reviewId) {
+        Review review = reviewRepository.findApprovedReview(reviewId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
+        LikesId likesId = new LikesId(member.getId(), reviewId);
+
+        Likes like = likesRepository.findById(likesId)
+                .orElseGet(() -> new Likes(likesId, member, review));
+
+        likesRepository.save(like);
     }
 }

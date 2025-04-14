@@ -98,6 +98,14 @@ public class ReviewController {
         return ResponseDto.success(DELETED);
     }
 
+    @PostMapping("/{reviewId}/likes")
+    public ResponseDto<Void> addLike(@LoginMember Member member,
+                                     @PathVariable Long reviewId) {
+        reviewService.addLike(member, reviewId);
+
+        return ResponseDto.success(CREATED);
+    }
+
     @GetMapping("/{reviewId}")
     public ResponseDto<MyReviewDetailRes> myReviewDetail(@LoginMember Member member,
                                                          @PathVariable Long reviewId) {
