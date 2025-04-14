@@ -27,4 +27,9 @@ public interface FeatureRepository extends JpaRepository<ReviewFeature, ReviewFe
     @Query("select f " +
             "from Feature f")
     List<Feature> findAllFeatures();
+
+    @Query("select rf.feature.name " +
+            "from ReviewFeature rf " +
+            "where rf.review.id = :reviewId")
+    List<String> findFeatureByReviewId(@Param("reviewId") Long reviewId);
 }

@@ -14,4 +14,9 @@ public interface SightRepository extends JpaRepository<Sight, Long> {
             "from Sight s " +
             "where s.review.id in :reviews")
     List<Sight> findByReviews(@Param("reviews") List<Long> reviews);
+
+    @Query("select s.compressedImage " +
+            "from Sight s " +
+            "where s.review.id = :reviewId")
+    List<String> findByReviewId(@Param("reviewId") Long reviewId);
 }

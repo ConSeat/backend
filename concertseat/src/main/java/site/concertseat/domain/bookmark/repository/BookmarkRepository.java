@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import site.concertseat.domain.bookmark.dto.BookmarkStadiumDto;
+import site.concertseat.domain.bookmark.dto.ReviewDetailDto;
 import site.concertseat.domain.bookmark.entity.Bookmark;
 import site.concertseat.domain.bookmark.entity.BookmarkId;
 
@@ -36,4 +37,16 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId>,
             "where b.bookmarkId = :bookmarkId " +
             "and b.isDeleted = true")
     Optional<Bookmark> findBDeletedBookmarkById(@Param("bookmarkId") Long bookmarkId);
+
+    @Query("select new site.concertseat.domain.bookmark.dto.ReviewDetailDto(" +
+            "b.review.id," +
+            "b.review.member.nickname," +
+            "b.review.member.src," +
+            "b.review.concert.name," +
+            "b.review.contents," +
+            "b.review.createdAt)" +
+            "from Bookmark b " +
+            "where b.member.id = :memberId " +
+            "and b.review.id = :reviewId")
+    ReviewDetailDto findBookmarkReview(@Param("memberId") Long memberId, @Param("reviewId") Long reviewId);
 }
