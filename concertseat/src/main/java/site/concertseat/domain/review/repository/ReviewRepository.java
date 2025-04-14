@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import site.concertseat.domain.review.dto.MyReviewDetailDto;
 import site.concertseat.domain.review.dto.MyReviewStadiumDto;
 import site.concertseat.domain.review.dto.ReviewStatsDto;
 import site.concertseat.domain.review.dto.ReviewWithLikesCount;
@@ -62,4 +63,18 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
             "where r.status = 'APPROVED' " +
             "and r.id = :reviewId")
     Optional<Review> findApprovedReview(@Param("reviewId") Long reviewId);
+
+    @Query("select new site.concertseat.domain.review.dto.MyReviewDetailDto(" +
+            "r.id," +
+            "r.member.nickname," +
+            "r.member.src," +
+            "r.concert.name," +
+            "r.contents," +
+            "r.createdAt," +
+            "r.status," +
+            "r.rejectionReason)" +
+            "from Review r " +
+            "where r.member.id = :memberId " +
+            "and r.id = :reviewId")
+    Optional<MyReviewDetailDto> findMyReview(@Param("memberId") Long memberId, @Param("reviewId") Long reviewId);
 }
