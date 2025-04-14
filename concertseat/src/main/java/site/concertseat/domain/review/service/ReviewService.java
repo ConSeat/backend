@@ -25,4 +25,6 @@ public interface ReviewService {
     MyReviewStadiumListRes findStadium(Member member);
 
     MyReviewSearchRes searchMyReview(Member member, MyReviewSearchReq req, Pageable pageable);
+
+    MyReviewDetailRes myReviewDetails(Member member, Long reviewId);
 }

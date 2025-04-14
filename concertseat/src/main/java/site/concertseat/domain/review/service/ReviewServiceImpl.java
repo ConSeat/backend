@@ -266,4 +266,16 @@ public class ReviewServiceImpl implements ReviewService {
 
         return new MyReviewSearchRes(reviewList);
     }
+
+    @Override
+    public MyReviewDetailRes myReviewDetails(Member member, Long reviewId) {
+        MyReviewDetailDto reviewDto = reviewRepository.findMyReview(member.getId(), reviewId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
+        List<String> images = sightRepository.findByReviewId(reviewId);
+        List<String> features = featureRepository.findFeatureByReviewId(reviewId);
+        List<String> obstructions = obstructionRepository.findObstructionByReviewId(reviewId);
+
+        return new MyReviewDetailRes(reviewDto, images, features, obstructions);
+    }
 }
