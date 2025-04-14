@@ -12,4 +12,6 @@ public interface BookmarkService {
     BookmarkReviewSearchRes searchReview(Member member, BookmarkReviewSearchReq req, Pageable pageable);
 
     void addBookmark(Member member, Long reviewId);
+
+    void deleteBookmark(Member member, Long reviewId);
 }

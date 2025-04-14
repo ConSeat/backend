@@ -20,8 +20,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
-import static site.concertseat.global.statuscode.SuccessCode.CREATED;
-import static site.concertseat.global.statuscode.SuccessCode.OK;
+import static site.concertseat.global.statuscode.SuccessCode.*;
 
 @RestController
 @RequestMapping("/api/reviews")
@@ -86,9 +85,16 @@ public class ReviewController {
     @PostMapping("/{reviewId}/bookmarks")
     public ResponseDto<Void> addBookmark(@LoginMember Member member,
                                          @PathVariable Long reviewId) {
-
         bookmarkService.addBookmark(member, reviewId);
 
         return ResponseDto.success(CREATED);
+    }
+
+    @DeleteMapping("/{reviewId}/bookmarks")
+    public ResponseDto<Void> deleteBookmark(@LoginMember Member member,
+                                            @PathVariable Long reviewId) {
+        bookmarkService.deleteBookmark(member, reviewId);
+
+        return ResponseDto.success(DELETED);
     }
 }

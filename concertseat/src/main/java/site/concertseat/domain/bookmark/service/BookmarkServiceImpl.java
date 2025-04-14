@@ -48,14 +48,33 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
+    @Transactional
     public void addBookmark(Member member, Long reviewId) {
         Review review = reviewRepository.findApprovedReview(reviewId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND));
 
         BookmarkId bookmarkId = new BookmarkId(member.getId(), reviewId);
 
+        Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
+                .orElseGet(() -> new Bookmark(bookmarkId, member, review));
+
+        bookmark.restore();
+
+        bookmarkRepository.save(bookmark);
+    }
+
+    @Override
+    @Transactional
+    public void deleteBookmark(Member member, Long reviewId) {
+        reviewRepository.findApprovedReview(reviewId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
+        BookmarkId bookmarkId = new BookmarkId(member.getId(), reviewId);
+
         if (!bookmarkRepository.existsById(bookmarkId)) {
-            bookmarkRepository.save(new Bookmark(bookmarkId, member, review));
+            throw new CustomException(NOT_FOUND);
         }
+
+        bookmarkRepository.deleteById(bookmarkId);
     }
 }

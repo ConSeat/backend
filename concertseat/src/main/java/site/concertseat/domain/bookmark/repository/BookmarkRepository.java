@@ -9,6 +9,7 @@ import site.concertseat.domain.bookmark.entity.Bookmark;
 import site.concertseat.domain.bookmark.entity.BookmarkId;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId>, BookmarkRepositoryCustom {
@@ -29,4 +30,10 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId>,
             "from Bookmark b " +
             "where b.member.id = :memberId")
     List<BookmarkStadiumDto> findStadiums(@Param("memberId") Long memberId);
+
+    @Query("select b " +
+            "from Bookmark b " +
+            "where b.bookmarkId = :bookmarkId " +
+            "and b.isDeleted = true")
+    Optional<Bookmark> findBDeletedBookmarkById(@Param("bookmarkId") Long bookmarkId);
 }
