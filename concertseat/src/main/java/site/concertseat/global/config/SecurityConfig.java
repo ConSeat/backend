@@ -33,6 +33,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(POST, "/api/reviews/concerts/{concertId}/seating/{seatingId}")
                             .authenticated()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/**", "/h2-console/**", "/docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
