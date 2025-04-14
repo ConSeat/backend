@@ -106,6 +106,14 @@ public class ReviewController {
         return ResponseDto.success(CREATED);
     }
 
+    @DeleteMapping("/{reviewId}/likes")
+    public ResponseDto<Void> deleteLike(@LoginMember Member member,
+                                        @PathVariable Long reviewId) {
+        reviewService.deleteLike(member, reviewId);
+
+        return ResponseDto.success(NO_CONTENT);
+    }
+
     @GetMapping("/{reviewId}")
     public ResponseDto<MyReviewDetailRes> myReviewDetail(@LoginMember Member member,
                                                          @PathVariable Long reviewId) {

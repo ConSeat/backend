@@ -293,4 +293,15 @@ public class ReviewServiceImpl implements ReviewService {
 
         likesRepository.save(like);
     }
+
+    @Override
+    @Transactional
+    public void deleteLike(Member member, Long reviewId) {
+        reviewRepository.findApprovedReview(reviewId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
+        LikesId likesId = new LikesId(member.getId(), reviewId);
+
+        likesRepository.deleteById(likesId);
+    }
 }

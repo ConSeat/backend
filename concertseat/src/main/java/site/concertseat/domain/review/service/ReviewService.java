@@ -29,4 +29,6 @@ public interface ReviewService {
     MyReviewDetailRes myReviewDetails(Member member, Long reviewId);
 
     void addLike(Member member, Long reviewId);
+
+    void deleteLike(Member member, Long reviewId);
 }
