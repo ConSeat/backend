@@ -10,4 +10,6 @@ public interface BookmarkService {
     BookmarkStadiumListRes findStadium(Member member);
 
     BookmarkReviewSearchRes searchReview(Member member, BookmarkReviewSearchReq req, Pageable pageable);
+
+    void addBookmark(Member member, Long reviewId);
 }
