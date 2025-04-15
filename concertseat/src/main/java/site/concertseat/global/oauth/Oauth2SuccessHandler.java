@@ -23,6 +23,6 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String userAgent = request.getHeader("User-Agent");
 
         response.addCookie(jwtUtils.createRefreshCookie(uuid, userAgent));
-        response.sendRedirect("/signin");
+        response.sendRedirect("/callback");
     }
 }
