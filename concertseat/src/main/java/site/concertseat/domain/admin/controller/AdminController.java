@@ -20,7 +20,7 @@ public class AdminController {
     public ResponseDto<Void> approveReview(@LoginMember Member member,
                                            @PathVariable Long reviewId,
                                            @RequestBody ApproveReviewReq request) {
-        adminService.approvedReview(member, reviewId, request);
+        adminService.approveReview(member, reviewId, request);
 
         return ResponseDto.success(NO_CONTENT);
     }
