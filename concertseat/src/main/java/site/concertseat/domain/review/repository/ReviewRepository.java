@@ -44,7 +44,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
     @Query("select count(r) " +
             "from Review r " +
             "where r.status = :status")
-    Long countApprovedReviews(@Param("status") ReviewStatus status);
+    Integer countApprovedReviews(@Param("status") ReviewStatus status);
 
     @Query("select count(r) " +
             "from Review r " +

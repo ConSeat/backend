@@ -68,4 +68,12 @@ public class Review extends BaseEntity {
 
     @Column(length = 500)
     private String rejectionReason;
+
+    public void updateStatus(ReviewStatus status) {
+        this.status = status;
+    }
+
+    public void updateRejectReason(String rejectReason) {
+        this.rejectionReason = rejectReason;
+    }
 }

@@ -37,7 +37,7 @@ public class StadiumServiceImpl implements StadiumService {
     @Override
     public StadiumListRes findStadiums() {
         List<Stadium> stadiums;
-        Long totalReviewCount;
+        Integer totalReviewCount;
 
         Object stadiumList = redisUtils.getData(STADIUM_KEY);
         if(stadiumList == null) {
@@ -52,7 +52,7 @@ public class StadiumServiceImpl implements StadiumService {
             totalReviewCount = reviewService.getTotalReviewCount();
             redisUtils.setData("reviewCount", totalReviewCount);
         } else {
-            totalReviewCount = (Long) reviewCount;
+            totalReviewCount = (Integer) reviewCount;
         }
 
         return new StadiumListRes(stadiums, totalReviewCount);

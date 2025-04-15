@@ -247,7 +247,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Long getTotalReviewCount() {
+    public Integer getTotalReviewCount() {
         return reviewRepository.countApprovedReviews(APPROVED);
     }
 
