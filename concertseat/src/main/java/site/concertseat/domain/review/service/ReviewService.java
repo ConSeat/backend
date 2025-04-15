@@ -20,7 +20,7 @@ public interface ReviewService {
 
     ImageUploadRes uploadImage(Member member, List<MultipartFile> file) throws IOException;
 
-    Long getTotalReviewCount();
+    Integer getTotalReviewCount();
 
     MyReviewStadiumListRes findStadium(Member member);
 

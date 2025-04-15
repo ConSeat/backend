@@ -13,9 +13,9 @@ public class StadiumListRes {
 
     private List<StadiumDto> inactive;
 
-    private Long totalReviewCount;
+    private Integer totalReviewCount;
 
-    public StadiumListRes(List<Stadium> stadiums, Long totalReviewCount) {
+    public StadiumListRes(List<Stadium> stadiums, Integer totalReviewCount) {
         Map<Boolean, List<Stadium>> stadiumMap = stadiums.stream()
                 .collect(Collectors.groupingBy(Stadium::getIsActive));
 
