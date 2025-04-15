@@ -3,6 +3,7 @@ package site.concertseat.domain.admin.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yaml.snakeyaml.util.EnumUtils;
 import site.concertseat.domain.admin.dto.req.ApproveReviewReq;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.entity.Review;
@@ -21,12 +22,17 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public void approvedReview(Member member, Long reviewId, ApproveReviewReq request) {
+    public void approveReview(Member member, Long reviewId, ApproveReviewReq request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND));
 
+        validateReviewStatus(request.getReviewStatus());
+
         ReviewStatus status = ReviewStatus.valueOf(request.getReviewStatus().toUpperCase());
-        validateReviewStatus(status);
+
+        if(status == ReviewStatus.APPROVED) {
+            throw new CustomException(BAD_REQUEST);
+        }
 
         updateReviewStatus(review, status);
 
@@ -44,8 +50,10 @@ public class AdminServiceImpl implements AdminService {
         review.updateRejectReason(rejectReason);
     }
 
-    private void validateReviewStatus(ReviewStatus status) {
-        if(status == ReviewStatus.APPROVED) {
+    private void validateReviewStatus(String reviewStatus) {
+        try {
+            EnumUtils.findEnumInsensitiveCase(ReviewStatus.class, reviewStatus);
+        } catch (IllegalArgumentException e) {
             throw new CustomException(BAD_REQUEST);
         }
     }
