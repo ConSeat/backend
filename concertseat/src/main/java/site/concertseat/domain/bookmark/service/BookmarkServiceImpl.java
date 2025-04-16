@@ -85,7 +85,7 @@ public class BookmarkServiceImpl implements BookmarkService {
 
         bookmarkRepository.deleteById(bookmarkId);
     }
-    
+
     @Override
     public BookmarkReviewDetailRes reviewDetails(Member member, Long reviewId) {
         ReviewDetailDto reviewDto = bookmarkRepository.findBookmarkReview(member.getId(), reviewId)

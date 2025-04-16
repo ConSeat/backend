@@ -27,4 +27,8 @@ public interface ReviewService {
     MyReviewSearchRes searchMyReview(Member member, MyReviewSearchReq req, Pageable pageable);
 
     MyReviewDetailRes myReviewDetails(Member member, Long reviewId);
+
+    void addLike(Member member, Long reviewId);
+
+    void deleteLike(Member member, Long reviewId);
 }
