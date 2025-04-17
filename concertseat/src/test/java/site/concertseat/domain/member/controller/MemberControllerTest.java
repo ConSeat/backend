@@ -56,7 +56,7 @@ public class MemberControllerTest {
     }
 
     @Test
-    public void 내_정보_조회_성공() throws Exception {
+    public void 마이페이지_정보_조회_성공() throws Exception {
         // given
 
         // when
@@ -73,12 +73,12 @@ public class MemberControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
                 .andDo(document(
-                        "내 정보 조회 성공",
+                        "마이페이지 정보 조회 성공",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Member API")
-                                .summary("내 정보 조회 API")
+                                .summary("마이페이지 정보 조회 API")
                                 .requestHeaders(
                                         headerWithName("Authorization")
                                                 .description("JWT 토큰")
@@ -97,8 +97,8 @@ public class MemberControllerTest {
                                                         .description("내 후기 개수")
                                         )
                                 )
-                                .requestSchema(Schema.schema("내 정보 조회 Request"))
-                                .responseSchema(Schema.schema("내 정보 조회 Response"))
+                                .requestSchema(Schema.schema("마이페이지 정보 조회 Request"))
+                                .responseSchema(Schema.schema("마이페이지 정보 조회 Response"))
                                 .build()
                         ))
                 );
@@ -147,6 +147,51 @@ public class MemberControllerTest {
                                 )
                                 .requestSchema(Schema.schema("프로필 수정 Request"))
                                 .responseSchema(Schema.schema("프로필 수정 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 프로필_정보_조회_성공() throws Exception {
+        // given
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get("/api/members/profile")
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "프로필 정보 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Member API")
+                                .summary("프로필 정보 조회 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.nickname").type(STRING)
+                                                        .description("멤버 닉네임"),
+                                                fieldWithPath("body.profileImage").type(STRING)
+                                                        .description("멤버 프로필 이미지 url"),
+                                                fieldWithPath("body.email").type(STRING)
+                                                        .description("멤버 이메일")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("프로필 정보 조회 Request"))
+                                .responseSchema(Schema.schema("프로필 정보 조회 Response"))
                                 .build()
                         ))
                 );

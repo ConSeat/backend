@@ -6,12 +6,16 @@ import org.springframework.transaction.annotation.Transactional;
 import site.concertseat.domain.bookmark.repository.BookmarkRepository;
 import site.concertseat.domain.member.dto.MemberInfo;
 import site.concertseat.domain.member.dto.req.MemberModifyReq;
+import site.concertseat.domain.member.dto.res.MemberProfileRes;
 import site.concertseat.domain.member.dto.res.MemberSearchRes;
 import site.concertseat.domain.member.dto.res.MemberModifyRes;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.member.repository.MemberRepository;
 import site.concertseat.domain.review.repository.ReviewRepository;
+import site.concertseat.global.exception.CustomException;
 import site.concertseat.global.s3.S3Service;
+
+import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,7 +28,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberSearchRes searchMember(Member member) {
-        MemberInfo memberInfo = memberRepository.findMemberInfoByMemberId(member.getId());
+        MemberInfo memberInfo = memberRepository.findMemberInfoByMemberId(member.getId())
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
         Long bookmarkCount = bookmarkRepository.countBookmarkByMemberId(member.getId());
         Long reviewCount = reviewRepository.countMemberReviews(member.getId());
 
@@ -49,5 +55,13 @@ public class MemberServiceImpl implements MemberService {
             String newImageSrc = s3Service.upload(memberModifyReq.getFile(), "members/"+member.getId()+"/profile", 1);
             member.updateSrc(newImageSrc);
         }
+    }
+
+    @Override
+    public MemberProfileRes getMemberInfo(Member member) {
+        MemberInfo memberInfo = memberRepository.findMemberInfoByMemberId(member.getId())
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
+        return new MemberProfileRes(memberInfo);
     }
 }

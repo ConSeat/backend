@@ -21,5 +21,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             "m.socialId) " +
             "from Member m " +
             "where m.id = :memberId")
-    MemberInfo findMemberInfoByMemberId(Long memberId);
+    Optional<MemberInfo> findMemberInfoByMemberId(Long memberId);
 }
