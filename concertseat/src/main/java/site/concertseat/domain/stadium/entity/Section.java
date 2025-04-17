@@ -25,8 +25,4 @@ public class Section {
     @NotNull
     @Column(length = 30)
     private String name;
-
-    @NotNull
-    @Column
-    private String image;
 }
