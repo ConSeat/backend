@@ -3,6 +3,7 @@ package site.concertseat.domain.stadium.dto;
 import lombok.Data;
 import site.concertseat.domain.stadium.entity.Stadium;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,12 +20,12 @@ public class StadiumListRes {
         Map<Boolean, List<Stadium>> stadiumMap = stadiums.stream()
                 .collect(Collectors.groupingBy(Stadium::getIsActive));
 
-        this.active = stadiumMap.get(true)
+        this.active = stadiumMap.getOrDefault(true, new ArrayList<>())
                 .stream()
                 .map(StadiumDto::toDto)
                 .toList();
 
-        this.inactive = stadiumMap.get(false)
+        this.inactive = stadiumMap.getOrDefault(false, new ArrayList<>())
                 .stream()
                 .map(StadiumDto::toDto)
                 .toList();

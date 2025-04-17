@@ -5,6 +5,7 @@ import site.concertseat.domain.stadium.entity.Floor;
 import site.concertseat.domain.stadium.entity.Seating;
 import site.concertseat.domain.stadium.entity.Section;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ public class StadiumDetailsRes {
                              Map<Integer, List<Section>> sections,
                              Map<Integer, List<Seating>> seating) {
         this.floors = floors.stream()
-                .map(floor -> new FloorDto(floor, sections.get(floor.getId()), seating))
+                .map(floor -> new FloorDto(floor, sections.getOrDefault(floor.getId(), new ArrayList<>()), seating))
                 .toList();
     }
 }

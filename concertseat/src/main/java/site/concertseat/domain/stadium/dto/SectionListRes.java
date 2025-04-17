@@ -4,6 +4,7 @@ import lombok.Data;
 import site.concertseat.domain.stadium.entity.Floor;
 import site.concertseat.domain.stadium.entity.Section;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,7 +18,8 @@ public class SectionListRes {
                 .collect(Collectors.groupingBy(section -> section.getFloor().getId()));
 
         this.floors = floors.stream()
-                .map(floor -> new FloorSectionDto(floor, sectionGroupedByFloor.get(floor.getId())))
+                .map(floor ->
+                        new FloorSectionDto(floor, sectionGroupedByFloor.getOrDefault(floor.getId(), new ArrayList<>())))
                 .toList();
     }
 }
