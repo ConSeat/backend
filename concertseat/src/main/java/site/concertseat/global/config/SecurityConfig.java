@@ -1,6 +1,7 @@
 package site.concertseat.global.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -11,29 +12,41 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import site.concertseat.global.jwt.filter.JwtAuthenticationFilter;
 import site.concertseat.global.jwt.service.JwtUtils;
 import site.concertseat.global.oauth.CustomOAuth2UserService;
 import site.concertseat.global.oauth.Oauth2SuccessHandler;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.POST;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    @Value("${FRONT_URL}")
+    private String frontURL;
+
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
     private final CustomOAuth2UserService oAuth2UserService;
     private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
-    public SecurityFilterChain localFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(POST, "/api/reviews/concerts/{concertId}/seating/{seatingId}")
-                            .authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/members/**").authenticated()
+                        .requestMatchers(POST, "/api/**").authenticated()
+                        .requestMatchers(DELETE, "/api/**").authenticated()
                         .requestMatchers("/api/**", "/h2-console/**", "/docs/**").permitAll()
                         .anyRequest().authenticated()
                 )
@@ -45,6 +58,9 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                )
+                .cors(corsConfigurer -> corsConfigurer
+                        .configurationSource(corsConfigurationSource())
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class)
@@ -59,5 +75,19 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedHeaders(Collections.singletonList("*"));
+        config.setAllowedMethods(Collections.singletonList("*"));
+        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", frontURL));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source =
+                new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
 }
