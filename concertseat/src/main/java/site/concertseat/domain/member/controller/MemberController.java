@@ -39,7 +39,7 @@ public class MemberController {
     }
 
     @GetMapping("/profile")
-    public ResponseDto<?> memberProfile(@LoginMember Member member) {
+    public ResponseDto<MemberProfileRes> memberProfile(@LoginMember Member member) {
         MemberProfileRes res = memberService.getMemberInfo(member);
 
         return ResponseDto.success(OK, res);
