@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import site.concertseat.domain.member.dto.req.MemberModifyReq;
+import site.concertseat.domain.member.dto.res.MemberProfileRes;
 import site.concertseat.domain.member.dto.res.MemberSearchRes;
 import site.concertseat.domain.member.dto.res.MemberModifyRes;
 import site.concertseat.domain.member.entity.Member;
@@ -37,4 +38,10 @@ public class MemberController {
         return ResponseDto.success(OK, res);
     }
 
+    @GetMapping("/profile")
+    public ResponseDto<?> memberProfile(@LoginMember Member member) {
+        MemberProfileRes res = memberService.getMemberInfo(member);
+
+        return ResponseDto.success(OK, res);
+    }
 }
