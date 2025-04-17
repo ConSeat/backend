@@ -18,16 +18,16 @@ insert into floor (floor_id, stadium_id, name) values
    (2, 1, '1F'),
    (3, 1, '2F');
 
-insert into section (section_id, floor_id, name, image) values
-    (1, 1, 'FLOOR A', 'src'),
-    (2, 1, 'FLOOR B', 'src'),
-    (3, 1, 'FLOOR C', 'src'),
-    (4, 2, '1', 'src'),
-    (5, 2, '2', 'src'),
-    (6, 2, '3', 'src'),
-    (7, 3, '24', 'src'),
-    (8, 3, '25', 'src'),
-    (9, 3, '26', 'src');
+insert into section (section_id, floor_id, name) values
+    (1, 1, 'FLOOR A'),
+    (2, 1, 'FLOOR B'),
+    (3, 1, 'FLOOR C'),
+    (4, 2, '1'),
+    (5, 2, '2'),
+    (6, 2, '3'),
+    (7, 3, '24'),
+    (8, 3, '25'),
+    (9, 3, '26');
 
 insert into seating (seating_id, section_id, name) values
    (1, 1, 'FLOOR'),
