@@ -21,7 +21,6 @@ import site.concertseat.global.oauth.CustomOAuth2UserService;
 import site.concertseat.global.oauth.Oauth2SuccessHandler;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.POST;
@@ -80,9 +79,9 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedHeaders(Collections.singletonList("*"));
-        config.setAllowedMethods(Collections.singletonList("*"));
-        config.setAllowedOriginPatterns(Arrays.asList("http://localhost:3000", frontURL));
+        config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", frontURL));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
