@@ -82,6 +82,14 @@ public class ReviewController {
         return ResponseDto.success(OK, res);
     }
 
+    @GetMapping("/{reviewId}")
+    public ResponseDto<MyReviewDetailRes> myReviewDetail(@LoginMember Member member,
+                                                         @PathVariable Long reviewId) {
+        MyReviewDetailRes res = reviewService.myReviewDetails(member, reviewId);
+
+        return ResponseDto.success(OK, res);
+    }
+
     @PostMapping("/{reviewId}/bookmarks")
     public ResponseDto<Void> addBookmark(@LoginMember Member member,
                                          @PathVariable Long reviewId) {
@@ -112,13 +120,5 @@ public class ReviewController {
         reviewService.deleteLike(member, reviewId);
 
         return ResponseDto.success(NO_CONTENT);
-    }
-
-    @GetMapping("/{reviewId}")
-    public ResponseDto<MyReviewDetailRes> myReviewDetail(@LoginMember Member member,
-                                                         @PathVariable Long reviewId) {
-        MyReviewDetailRes res = reviewService.myReviewDetails(member, reviewId);
-
-        return ResponseDto.success(OK, res);
     }
 }
