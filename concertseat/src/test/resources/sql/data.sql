@@ -107,5 +107,3 @@ insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) 
 
 insert into likes(review_id, member_id) values
     (102, 1);
-
-
