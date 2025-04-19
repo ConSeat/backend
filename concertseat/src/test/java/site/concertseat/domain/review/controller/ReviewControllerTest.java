@@ -1530,7 +1530,7 @@ public class ReviewControllerTest {
     }
 
     @Test
-    public void 좋아요_해제_실패_없는_리뷰_아이디() throws Exception {
+    public void 북마크_해제_실패_없는_리뷰_아이디() throws Exception {
         //given
         Long reviewId = 10001L;
 
