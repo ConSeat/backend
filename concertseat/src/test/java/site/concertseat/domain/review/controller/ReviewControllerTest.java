@@ -37,8 +37,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static site.concertseat.global.statuscode.ErrorCode.*;
-import static site.concertseat.global.statuscode.SuccessCode.CREATED;
-import static site.concertseat.global.statuscode.SuccessCode.OK;
+import static site.concertseat.global.statuscode.SuccessCode.*;
 import static site.concertseat.utils.ResponseFieldUtils.getCommonResponseFields;
 
 @Transactional
@@ -1484,6 +1483,94 @@ public class ReviewControllerTest {
                                 )
                                 .requestSchema(Schema.schema("좋아요 추가 Request"))
                                 .responseSchema(Schema.schema("좋아요 추가 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 좋아요_해제_성공() throws Exception {
+        //given
+        Long reviewId = 2L;
+
+        //when
+
+        ResultActions actions = mockMvc.perform(
+                delete("/api/reviews/{reviewId}/likes", reviewId)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isNoContent())
+                .andExpect(jsonPath("$.header.message").value(NO_CONTENT.getMessage()))
+                .andDo(document(
+                        "좋아요 해제 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("좋아요 해제 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .pathParameters(
+                                        parameterWithName("reviewId")
+                                                .description("리뷰 아이디")
+                                )
+                                .requestSchema(Schema.schema("좋아요 해제 Request"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 좋아요_해제_실패_없는_리뷰_아이디() throws Exception {
+        //given
+        Long reviewId = 10001L;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                delete("/api/reviews/{reviewId}/likes", reviewId)
+                        .header("Authorization", "Bearer " + jwtToken)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "좋아요 해제 실패 - 없는 리뷰 아이디",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("좋아요 추가 API")
+                                .requestHeaders(
+                                        headerWithName("Authorization")
+                                                .description("JWT 토큰")
+                                )
+                                .pathParameters(
+                                        parameterWithName("reviewId")
+                                                .description("리뷰 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body").type(NULL)
+                                                        .description("내용 없음")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("좋아요 해제 Request"))
+                                .responseSchema(Schema.schema("좋아요 해제 Response"))
                                 .build()
                         ))
                 );

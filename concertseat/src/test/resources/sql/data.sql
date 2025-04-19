@@ -101,3 +101,6 @@ insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) 
     (10, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -11, CURRENT_TIMESTAMP), false),
     (11, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -10, CURRENT_TIMESTAMP), false),
     (12, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -9, CURRENT_TIMESTAMP), false);
+
+insert into likes(review_id, member_id) values
+    (2, 1);
