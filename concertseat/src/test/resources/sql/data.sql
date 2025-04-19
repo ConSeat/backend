@@ -86,7 +86,9 @@ insert into review (review_id, member_id, seating_id, concert_id, contents, thum
   (11, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
   (12, 1, 7, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
   (13, 1, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
-  (14, 2, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false);
+  (14, 2, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (101, 2, 1, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
+  (102, 2, 2, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false);
 
 insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) values
     (1, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -20, CURRENT_TIMESTAMP), false),
@@ -100,7 +102,10 @@ insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) 
     (9, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -12, CURRENT_TIMESTAMP), false),
     (10, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -11, CURRENT_TIMESTAMP), false),
     (11, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -10, CURRENT_TIMESTAMP), false),
-    (12, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -9, CURRENT_TIMESTAMP), false);
+    (12, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -9, CURRENT_TIMESTAMP), false),
+    (102, 1, current_timestamp, current_timestamp, false);
 
 insert into likes(review_id, member_id) values
-    (2, 1);
+    (102, 1);
+
+
