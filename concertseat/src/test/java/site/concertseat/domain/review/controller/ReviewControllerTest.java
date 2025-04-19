@@ -1397,7 +1397,7 @@ public class ReviewControllerTest {
     @Test
     public void 좋아요_추가_성공() throws Exception {
         //given
-        Long reviewId = 1L;
+        Long reviewId = 101L;
 
         //when
         ResultActions actions = mockMvc.perform(
@@ -1491,7 +1491,7 @@ public class ReviewControllerTest {
     @Test
     public void 좋아요_해제_성공() throws Exception {
         //given
-        Long reviewId = 2L;
+        Long reviewId = 102L;
 
         //when
 
