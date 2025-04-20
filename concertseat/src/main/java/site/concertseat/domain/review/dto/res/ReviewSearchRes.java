@@ -9,6 +9,12 @@ import java.util.List;
 
 @Data
 public class ReviewSearchRes {
+    private String floorName;
+
+    private String sectionName;
+
+    private String seatingName;
+
     private String distanceMessage;
 
     private List<String> thumbnails = new ArrayList<>();
@@ -18,6 +24,9 @@ public class ReviewSearchRes {
     private List<ReviewDto> reviews;
 
     public ReviewSearchRes(ReviewStatsDto reviewStats, List<ReviewWithLikesCount> reviews) {
+        this.floorName = reviewStats.getFloorName();
+        this.sectionName = reviewStats.getSectionName();
+        this.seatingName = reviewStats.getSeatingName();
         this.distanceMessage = reviewStats.getMessage();
         this.reviewCount = reviewStats.getReviewCount();
         this.reviews = reviews.stream().map(ReviewDto::toDto).toList();

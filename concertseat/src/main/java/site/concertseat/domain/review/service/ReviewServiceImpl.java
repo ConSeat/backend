@@ -139,11 +139,8 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewSearchRes searchReview(Member member, Integer seatingId) {
-        ReviewStatsDto reviewStats = reviewRepository.findReviewStats(seatingId, APPROVED);
-
-        if (reviewStats.getReviewCount() == 0) {
-            throw new CustomException(NOT_FOUND);
-        }
+        ReviewStatsDto reviewStats = reviewRepository.findReviewStats(seatingId, APPROVED)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
 
         List<ReviewWithLikesCount> reviewsWithLikesCount = reviewRepository
                 .findReviewsBySeatingId(seatingId, APPROVED, Pageable.ofSize(3));
