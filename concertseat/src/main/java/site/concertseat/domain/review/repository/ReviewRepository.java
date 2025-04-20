@@ -31,14 +31,18 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
                                                       Pageable pageable);
 
     @Query("select new site.concertseat.domain.review.dto.ReviewStatsDto( " +
-            "   avg(r.stageDistance), " +
-            "   avg(r.thrustStageDistance), " +
-            "   avg(r.screenDistance), " +
-            "   count(r)) " +
+            "r.seating.section.floor.name, " +
+            "r.seating.section.name, " +
+            "r.seating.name,"+
+            "avg(r.stageDistance), " +
+            "avg(r.thrustStageDistance), " +
+            "avg(r.screenDistance), " +
+            "count(r)) " +
             "from Review r " +
             "where r.seating.id = :seatingId " +
-            "and r.status = :status")
-    ReviewStatsDto findReviewStats(@Param("seatingId") Integer seatingId,
+            "and r.status = :status " +
+            "group by r.seating.section.floor.name, r.seating.section.name, r.seating.name")
+    Optional<ReviewStatsDto> findReviewStats(@Param("seatingId") Integer seatingId,
                                    @Param("status") ReviewStatus status);
 
     @Query("select count(r) " +

@@ -4,6 +4,7 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1757,5 +1758,121 @@ public class ReviewControllerTest {
                                 .build()
                         ))
                 );
+    }
+
+    @Test
+    public void 구역별_시야_조회_성공() throws Exception {
+        //given
+        Long seatingId = 1L;
+
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews/seating/{seatingId}", seatingId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "구역별 시야 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("구역별 시야 조회 API")
+                                .pathParameters(
+                                        parameterWithName("seatingId")
+                                                .description("좌석 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.reviews[].reviewId").type(NUMBER)
+                                                        .description("리뷰 아이디"),
+                                                fieldWithPath("body.reviews[].writerNickname").type(STRING)
+                                                        .description("작성자 닉네임"),
+                                                fieldWithPath("body.reviews[].writerSrc").type(STRING)
+                                                        .description("작성자 프로필 url"),
+                                                fieldWithPath("body.reviews[].concertName").type(STRING)
+                                                        .description("콘서트 이름"),
+                                                fieldWithPath("body.reviews[].images").type(ARRAY)
+                                                        .description("이미지 url 리스트"),
+                                                fieldWithPath("body.reviews[].contents").type(STRING)
+                                                        .description("리뷰 내용"),
+                                                fieldWithPath("body.reviews[].createdAt").type(STRING)
+                                                        .description("작성 날짜"),
+                                                fieldWithPath("body.reviews[].features").type(ARRAY)
+                                                        .description("특징 리스트"),
+                                                fieldWithPath("body.reviews[].obstructions").type(ARRAY)
+                                                        .description("방해 요소 리스트"),
+                                                fieldWithPath("body.reviews[].likesCount").type(NUMBER)
+                                                        .description("좋아요 개수"),
+                                                fieldWithPath("body.reviews[].isLiked").type(BOOLEAN)
+                                                        .description("좋아요 여부"),
+                                                fieldWithPath("body.reviews[].isBookmarked").type(BOOLEAN)
+                                                        .description("북마크 여부"),
+                                                fieldWithPath("body.distanceMessage").type(STRING)
+                                                        .description("한줄 요약"),
+                                                fieldWithPath("body.thumbnails").type(ARRAY)
+                                                        .description("대표 이미지 url(3장)"),
+                                                fieldWithPath("body.reviewCount").type(NUMBER)
+                                                        .description("리뷰 전체 개수"),
+                                                fieldWithPath("body.floorName").type(NUMBER)
+                                                        .description("층 이름"),
+                                                fieldWithPath("body.sectionName").type(NUMBER)
+                                                        .description("구역 이름"),
+                                                fieldWithPath("body.seatingName").type(NUMBER)
+                                                        .description("열 이름(FLOOR인 경우 null반환)")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("구역별 시야 조회 Request"))
+                                .responseSchema(Schema.schema("구역별 시야 조회 Response"))
+                                .build()
+                        ))
+                );
+
+    }
+
+    @Test
+    public void 구역별_시야_조회_실패_리뷰가_없는_열에_대한_리뷰_조회() throws Exception {
+        //given
+        Long seatingId = 20L;
+
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews/seating/{seatingId}", seatingId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "구역별 시야 조회 실패 - 리뷰가 하나도 없는 열에 대한 리뷰 조회하는 경우",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("구역별 시야 조회 API")
+                                .pathParameters(
+                                        parameterWithName("seatingId")
+                                                .description("좌석 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body").type(NULL)
+                                                        .description("내용 없음")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("구역별 시야 조회 Request"))
+                                .responseSchema(Schema.schema("구역별 시야 조회 Response"))
+                                .build()
+                        ))
+                );
+
     }
 }

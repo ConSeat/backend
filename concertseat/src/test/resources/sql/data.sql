@@ -88,7 +88,7 @@ insert into review (review_id, member_id, seating_id, concert_id, contents, thum
   (13, 1, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
   (14, 2, 8, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
   (101, 2, 1, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false),
-  (102, 2, 2, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false);
+  (102, 2, 1, 1, '테스트', 'src', 1, 1, 1, 'APPROVED', current_timestamp, current_timestamp, false);
 
 insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) values
     (1, 1, DATEADD('MINUTE', -1, CURRENT_TIMESTAMP), DATEADD('MINUTE', -20, CURRENT_TIMESTAMP), false),
@@ -107,3 +107,13 @@ insert into bookmark(review_id, member_id, created_at, modified_at, is_deleted) 
 
 insert into likes(review_id, member_id) values
     (102, 1);
+
+insert into review_feature(review_id, feature_id) values
+  (1, 1),
+  (1, 2),
+  (101, 3),
+  (102, 5);
+
+insert into review_obstruction(review_id, obstruction_id) values
+  (1, 1),
+  (101, 1);

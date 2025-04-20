@@ -34,6 +34,12 @@ public class ReviewStatsDto {
             "본무대, 돌출, 전광판 모두 멀거나 안 보여요"
     };
 
+    private String floorName;
+
+    private String sectionName;
+
+    private String seatingName;
+
     private Integer stageDistance;
 
     private Integer thrustStageDistance;
@@ -44,8 +50,15 @@ public class ReviewStatsDto {
 
     private Long reviewCount;
 
-    public ReviewStatsDto(Double stageDistance, Double thrustStageDistance, Double screenDistance, Long reviewCount) {
+    public ReviewStatsDto(String floorName, String sectionName, String seatingName,
+                          Double stageDistance, Double thrustStageDistance, Double screenDistance, Long reviewCount) {
+        this.floorName = floorName;
+        this.sectionName = sectionName;
         this.reviewCount = reviewCount;
+
+        if(!seatingName.equals("FLOOR")) {
+            this.seatingName = seatingName;
+        }
 
         if (reviewCount > 0) {
             this.stageDistance = toInt(stageDistance);
