@@ -1875,4 +1875,96 @@ public class ReviewControllerTest {
                 );
 
     }
+
+    @Test
+    public void 후기_전체_조회_성공() throws Exception {
+        //given
+        Long seatingId = 1L;
+        List<String> features = List.of("1", "2");
+
+        List<String> obstructions = List.of("2");
+
+        Long lastReviewId = 102L;
+
+        String sort = "createdAt";
+
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews/seating/{seatingId}/list", seatingId)
+                        .param("features", features.toArray(new String[0]))
+                        .param("obstructions", obstructions.toArray(new String[0]))
+                        .param("lastReviewId", String.valueOf(lastReviewId))
+                        .param("sort", sort)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "후기 전체 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("후기 전체 조회 API")
+                                .pathParameters(
+                                        parameterWithName("seatingId")
+                                                .description("좌석 아이디")
+                                )
+                                .queryParameters(
+                                        parameterWithName("features")
+                                                .description("특징 아이디(리스트)").optional(),
+                                        parameterWithName("obstructions")
+                                                .description("방해물 아이디(리스트)").optional(),
+                                        parameterWithName("lastReviewId")
+                                                .description("마지막으로 조회한 리뷰 아이디").optional(),
+                                        parameterWithName("sort")
+                                                .description("정렬 기준(없는 경우 좋아요순)").optional()
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.reviews.content[].reviewId").type(NUMBER)
+                                                        .description("리뷰 아이디"),
+                                                fieldWithPath("body.reviews.content[].writerNickname").type(STRING)
+                                                        .description("작성자 닉네임"),
+                                                fieldWithPath("body.reviews.content[].writerSrc").type(STRING)
+                                                        .description("작성자 프로필 url"),
+                                                fieldWithPath("body.reviews.content[].concertName").type(STRING)
+                                                        .description("콘서트 이름"),
+                                                fieldWithPath("body.reviews.content[].images").type(ARRAY)
+                                                        .description("이미지 url 리스트"),
+                                                fieldWithPath("body.reviews.content[].contents").type(STRING)
+                                                        .description("리뷰 내용"),
+                                                fieldWithPath("body.reviews.content[].createdAt").type(STRING)
+                                                        .description("작성 날짜"),
+                                                fieldWithPath("body.reviews.content[].features").type(ARRAY)
+                                                        .description("특징 리스트"),
+                                                fieldWithPath("body.reviews.content[].obstructions").type(ARRAY)
+                                                        .description("방해 요소 리스트"),
+                                                fieldWithPath("body.reviews.content[].likesCount").type(NUMBER)
+                                                        .description("좋아요 개수"),
+                                                fieldWithPath("body.reviews.content[].isLiked").type(BOOLEAN)
+                                                        .description("좋아요 여부"),
+                                                fieldWithPath("body.reviews.content[].isBookmarked").type(BOOLEAN)
+                                                        .description("북마크 여부"),
+                                                fieldWithPath("body.reviews.sliceNumber").type(NUMBER)
+                                                        .description("현재 페이지 숫자"),
+                                                fieldWithPath("body.reviews.size").type(NUMBER)
+                                                        .description("페이지 개수"),
+                                                fieldWithPath("body.reviews.hasNext").type(BOOLEAN)
+                                                        .description("다음 페이지 존재 유무"),
+                                                fieldWithPath("body.reviews.numberOfElements").type(NUMBER)
+                                                        .description("contents 배열 사이즈")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("후기 전체 조회 Request"))
+                                .responseSchema(Schema.schema("후기 전체 조회 Response"))
+                                .build()
+                        ))
+                );
+
+    }
 }
