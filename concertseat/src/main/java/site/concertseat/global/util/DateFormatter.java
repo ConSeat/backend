@@ -29,6 +29,12 @@ public class DateFormatter {
     public static String convertToTime(LocalDateTime date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd-HH.mm.ss");
 
-        return LocalDateTime.now().format(formatter);
+        return date.format(formatter);
+    }
+
+    public static String convertToDate(LocalDateTime date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+        return date.format(formatter);
     }
 }
