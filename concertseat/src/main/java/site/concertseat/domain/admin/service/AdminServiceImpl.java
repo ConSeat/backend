@@ -1,15 +1,27 @@
 package site.concertseat.domain.admin.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yaml.snakeyaml.util.EnumUtils;
+import site.concertseat.domain.admin.dto.AdminReviewDto;
+import site.concertseat.domain.admin.dto.BookmarksAndLikesCountDto;
+import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
 import site.concertseat.domain.admin.dto.req.ApproveReviewReq;
+import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
+import site.concertseat.domain.admin.repository.AdminReviewRepository;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.entity.Review;
 import site.concertseat.domain.review.enums.ReviewStatus;
-import site.concertseat.domain.review.repository.ReviewRepository;
+import site.concertseat.global.dto.PageDto;
 import site.concertseat.global.exception.CustomException;
+
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static site.concertseat.global.statuscode.ErrorCode.BAD_REQUEST;
 import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
@@ -18,7 +30,35 @@ import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
-    private final ReviewRepository reviewRepository;
+    private final AdminReviewRepository reviewRepository;
+
+    @Override
+    public AdminReviewListRes findAdminReviews(Pageable pageable, AdminReviewListReq adminReviewListReq) {
+        Page<AdminReviewDto> adminReviews = reviewRepository.findAdminReviews(pageable, adminReviewListReq);
+
+        setBookmarksAndLikesCount(adminReviews);
+
+        return new AdminReviewListRes(new PageDto<>(adminReviews));
+    }
+
+    private void setBookmarksAndLikesCount(Page<AdminReviewDto> adminReviews) {
+        List<Long> reviewIds = adminReviews.getContent().stream()
+                .map(AdminReviewDto::getReviewId)
+                .toList();
+
+        Map<Long, BookmarksAndLikesCountDto> count = reviewRepository.countBookmarksAndLikes(reviewIds).stream()
+                .collect(Collectors.toMap(
+                        BookmarksAndLikesCountDto::getReviewId,
+                        Function.identity()
+                ));
+
+        adminReviews.getContent().forEach(
+                review -> {
+                    BookmarksAndLikesCountDto bookmarksAndLikesCountDto = count.get(review.getReviewId());
+                    review.setBookmarksCount(bookmarksAndLikesCountDto.getBookmarksCount());
+                    review.setLikesCount(bookmarksAndLikesCountDto.getLikesCount());
+                });
+    }
 
     @Override
     @Transactional
