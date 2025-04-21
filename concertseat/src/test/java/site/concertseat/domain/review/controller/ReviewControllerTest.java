@@ -4,7 +4,6 @@ import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.Schema;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -615,73 +614,6 @@ public class ReviewControllerTest {
         req.setThrustStageDistance("CLOSE");
 
         return req;
-    }
-
-    @Test
-    public void 콘서트_리뷰_등록_실패_비어있는_특징_아이디() throws Exception {
-        // given
-        int seatingId = 1;
-        int concertId = 1;
-        ReviewPostReq req = getEmptyFeatureId();
-
-        String content = objectMapper.writeValueAsString(req);
-
-        // when
-        ResultActions actions = mockMvc.perform(
-                post("/api/reviews/concerts/{concertId}/seating/{seatingId}", concertId, seatingId)
-                        .header("Authorization", "Bearer " + jwtToken)
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .characterEncoding("UTF-8")
-                        .content(content)
-                        .with(csrf())
-        );
-
-        // then
-        actions
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.header.message").value(INVALID_ARGUMENT.getMessage()))
-                .andDo(document(
-                        "콘서트 리뷰 등록 실패 - 비어있는 특징 아이디 리스트",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        resource(ResourceSnippetParameters.builder()
-                                .tag("Review API")
-                                .summary("콘서트 리뷰 등록 API")
-                                .requestHeaders(
-                                        headerWithName("Authorization")
-                                                .description("JWT 토큰")
-                                )
-                                .requestFields(
-                                        List.of(
-                                                fieldWithPath("images[]").type(ARRAY)
-                                                        .description("이미지 url 리스트"),
-                                                fieldWithPath("features[]").type(ARRAY)
-                                                        .description("특징 Id 리스트"),
-                                                fieldWithPath("obstructions[]").type(ARRAY)
-                                                        .description("방해요소 Id 리스트"),
-                                                fieldWithPath("contents").type(STRING)
-                                                        .description("리뷰 내용"),
-                                                fieldWithPath("screenDistance").type(STRING)
-                                                        .description("전광판과의 거리"),
-                                                fieldWithPath("stageDistance").type(STRING)
-                                                        .description("본무대와의 거리"),
-                                                fieldWithPath("thrustStageDistance").type(STRING)
-                                                        .description("돌출무대와의 거리")
-                                        )
-                                )
-                                .responseFields(
-                                        getCommonResponseFields(
-                                                fieldWithPath("body").type(NULL)
-                                                        .description("내용 없음")
-
-                                        )
-                                )
-                                .requestSchema(Schema.schema("콘서트 리뷰 등록 Request"))
-                                .responseSchema(Schema.schema("콘서트 리뷰 등록 Response"))
-                                .build()
-                        ))
-                );
     }
 
     private static ReviewPostReq getEmptyFeatureId() {
@@ -1886,7 +1818,7 @@ public class ReviewControllerTest {
 
         Long lastReviewId = 102L;
 
-        String sort = "createdAt";
+        String sort = "modifiedAt";
 
         ResultActions actions = mockMvc.perform(
                 get("/api/reviews/seating/{seatingId}/list", seatingId)

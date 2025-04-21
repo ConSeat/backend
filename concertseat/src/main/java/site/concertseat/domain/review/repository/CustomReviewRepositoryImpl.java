@@ -72,7 +72,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 
         for (Order order : pageable.getSort()) {
             switch (order.getProperty()) {
-                case "createdAt" -> orderByCreatedAt(query, reviewListReq);
+                case "modifiedAt" -> orderByModifiedAt(query, reviewListReq);
                 case "likesCount" -> booleanBuilder.and(orderByLikesCount(query, reviewListReq));
             }
         }
@@ -80,7 +80,7 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
         return booleanBuilder;
     }
 
-    private void orderByCreatedAt(JPAQuery<Tuple> query, ReviewListReq reviewListReq) {
+    private void orderByModifiedAt(JPAQuery<Tuple> query, ReviewListReq reviewListReq) {
         Review lastReview = null;
 
         if (reviewListReq.getLastReviewId() != null) {
@@ -94,15 +94,15 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
         }
 
         if (lastReview != null) {
-            query.where(review.createdAt
-                    .lt(lastReview.getCreatedAt())
-                    .or(review.createdAt
-                            .eq(lastReview.getCreatedAt())
+            query.where(review.modifiedAt
+                    .lt(lastReview.getModifiedAt())
+                    .or(review.modifiedAt
+                            .eq(lastReview.getModifiedAt())
                             .and(review.id
                                     .lt(lastReview.getId()))));
         }
 
-        query.orderBy(review.createdAt.desc())
+        query.orderBy(review.modifiedAt.desc())
                 .orderBy(review.id.desc());
     }
 
