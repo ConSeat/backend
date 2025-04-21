@@ -11,6 +11,7 @@ import site.concertseat.domain.review.enums.Distance;
 import site.concertseat.domain.review.enums.ReviewStatus;
 import site.concertseat.domain.stadium.entity.Seating;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -31,11 +32,9 @@ public class ReviewPostReq {
     @Size(min = 1, max = 4)
     private List<String> images;
 
-    @Size(min = 1)
-    private List<Integer> features;
+    private List<Integer> features = new ArrayList<>();
 
-    @Size(min = 1)
-    private List<Integer> obstructions;
+    private List<Integer> obstructions = new ArrayList<>();
 
     public Review toEntity(Member member, Seating seating, Concert concert) {
         return Review.builder()
