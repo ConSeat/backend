@@ -10,10 +10,14 @@ import site.concertseat.domain.admin.dto.AdminReviewDto;
 import site.concertseat.domain.admin.dto.BookmarksAndLikesCountDto;
 import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
 import site.concertseat.domain.admin.dto.req.ApproveReviewReq;
+import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
 import site.concertseat.domain.admin.repository.AdminReviewRepository;
 import site.concertseat.domain.member.entity.Member;
+import site.concertseat.domain.review.entity.Feature;
+import site.concertseat.domain.review.entity.Obstruction;
 import site.concertseat.domain.review.entity.Review;
+import site.concertseat.domain.review.entity.Sight;
 import site.concertseat.domain.review.enums.ReviewStatus;
 import site.concertseat.global.dto.PageDto;
 import site.concertseat.global.exception.CustomException;
@@ -39,6 +43,42 @@ public class AdminServiceImpl implements AdminService {
         setBookmarksAndLikesCount(adminReviews);
 
         return new AdminReviewListRes(new PageDto<>(adminReviews));
+    }
+
+    @Override
+    public AdminReviewDetails findAdminReview(Long reviewId) {
+        AdminReviewDetails review = reviewRepository.findAdminReview(reviewId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
+        setImages(review);
+        setFeatures(review);
+        setObstructions(review);
+
+        return review;
+    }
+
+    private void setImages(AdminReviewDetails review) {
+        List<Sight> sights = reviewRepository.findSightsByReview(review.getReviewId());
+
+        review.setImages(sights.stream()
+                .map(Sight::getCompressedImage)
+                .toList());
+    }
+
+    private void setFeatures(AdminReviewDetails review) {
+        List<Feature> features = reviewRepository.findFeaturesByReview(review.getReviewId());
+
+        review.setFeatures(features.stream()
+                .map(Feature::getName)
+                .toList());
+    }
+
+    private void setObstructions(AdminReviewDetails review) {
+        List<Obstruction> obstructions = reviewRepository.findObstructionsByReview(review.getReviewId());
+
+        review.setObstructions(obstructions.stream()
+                .map(Obstruction::getName)
+                .toList());
     }
 
     private void setBookmarksAndLikesCount(Page<AdminReviewDto> adminReviews) {
