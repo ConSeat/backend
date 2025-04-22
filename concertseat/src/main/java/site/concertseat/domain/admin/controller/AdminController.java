@@ -6,6 +6,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
 import site.concertseat.domain.admin.dto.req.ApproveReviewReq;
+import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
 import site.concertseat.domain.admin.service.AdminService;
 import site.concertseat.domain.member.entity.Member;
@@ -27,6 +28,13 @@ public class AdminController {
                                                            @PageableDefault(sort = "modifiedAt", direction = DESC)
                                                                Pageable pageable) {
         AdminReviewListRes result = adminService.findAdminReviews(pageable, adminReviewListReq);
+
+        return ResponseDto.success(OK, result);
+    }
+
+    @GetMapping("/reviews/{reviewId}")
+    public ResponseDto<AdminReviewDetails> findAdminReview(@PathVariable Long reviewId) {
+        AdminReviewDetails result = adminService.findAdminReview(reviewId);
 
         return ResponseDto.success(OK, result);
     }
