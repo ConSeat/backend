@@ -16,10 +16,12 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.List;
 
 import static site.concertseat.global.statuscode.ErrorCode.*;
 import static site.concertseat.global.util.DateFormatter.convertToTime;
@@ -120,24 +122,20 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public List<String> convertCompressedMultipartFiles(List<String> fileUrls) throws IOException {
-        List<String> uploadedUrls = new ArrayList<>();
-
-        for (String url : fileUrls) {
-            String uploadedUrl = uploadCompressedImage(url);
-            uploadedUrls.add(uploadedUrl);
-        }
-
-        return uploadedUrls;
-    }
-
-
-    private String uploadCompressedImage(String fileUrl) throws IOException {
+    public String uploadCompressedImage(String fileUrl) throws IOException {
         String fileKey = fileUrl.replace(bucketUrl, "");
 
         S3Object s3Object = amazonS3Client.getObject(bucket, fileKey);
         S3ObjectInputStream s3InputStream = s3Object.getObjectContent();
         BufferedImage image = ImageIO.read(s3InputStream);
+
+        if (image.getTransparency() == Transparency.TRANSLUCENT) {
+            BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = newImage.createGraphics();
+            g2d.drawImage(image, 0, 0, Color.WHITE, null);
+            g2d.dispose();
+            image = newImage;
+        }
 
         String extension = "jpeg";
         String s3FileName = convertToCompressedUrl(fileKey);
@@ -164,7 +162,6 @@ public class S3ServiceImpl implements S3Service {
             writer.dispose();
         }
     }
-
     private String convertToCompressedUrl(String url) {
         int lastDotIndex = url.lastIndexOf(".");
 

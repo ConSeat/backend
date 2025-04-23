@@ -1,22 +1,17 @@
 package site.concertseat.global.aop;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import site.concertseat.domain.admin.dto.req.ApproveReviewReq;
+import site.concertseat.domain.admin.dto.req.ChangeReviewStatusReq;
 
-import java.security.Principal;
 import java.util.Arrays;
 import java.util.Optional;
 
@@ -38,13 +33,13 @@ public class AdminLogAspect {
 
         Object[] args = joinPoint.getArgs();
         Optional<Object> maybeBody = Arrays.stream(args)
-                .filter(arg -> arg instanceof ApproveReviewReq)
+                .filter(arg -> arg instanceof ChangeReviewStatusReq)
                 .findFirst();;
 
         maybeBody.ifPresent(body -> {
             try {
                 String nickname = null;
-                if (body instanceof ApproveReviewReq reqDto) {
+                if (body instanceof ChangeReviewStatusReq reqDto) {
                     nickname = reqDto.getInspectorName();
                 }
 
