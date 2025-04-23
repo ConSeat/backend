@@ -11,6 +11,7 @@ import site.concertseat.domain.stadium.entity.Section;
 import site.concertseat.domain.stadium.entity.Stadium;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StadiumRepository extends JpaRepository<Stadium, Integer> {
@@ -28,6 +29,12 @@ public interface StadiumRepository extends JpaRepository<Stadium, Integer> {
             "from Seating s " +
             "where s.section in :sections")
     List<Seating> findSeatingBySections(@Param("sections") List<Section> sections);
+
+    @Query("select s " +
+            "from Section s " +
+            "join fetch s.floor f " +
+            "where s.id = :sectionId")
+    Optional<Section> findSectionWithFloor(@Param("sectionId") Integer sectionId);
 
     @Query("select new site.concertseat.domain.stadium.dto.SeatingWithCountDto(" +
             "s.id, s.name, count(r)) " +

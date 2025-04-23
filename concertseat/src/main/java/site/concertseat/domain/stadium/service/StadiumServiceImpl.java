@@ -1,7 +1,6 @@
 package site.concertseat.domain.stadium.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import site.concertseat.domain.review.repository.FeatureRepository;
@@ -80,6 +79,11 @@ public class StadiumServiceImpl implements StadiumService {
     @Override
     public SectionListRes findSections(Integer stadiumId) {
         List<Floor> floors = stadiumRepository.findFloorsByStadiumId(stadiumId);
+
+        if (floors.isEmpty()) {
+            throw new CustomException(NOT_FOUND);
+        }
+
         List<Section> sections = stadiumRepository.findSectionsByFloors(floors);
 
         return new SectionListRes(floors, sections);
@@ -87,9 +91,12 @@ public class StadiumServiceImpl implements StadiumService {
 
     @Override
     public SeatingListRes findSeating(Integer sectionId) {
+        Section section = stadiumRepository.findSectionWithFloor(sectionId)
+                .orElseThrow(() -> new CustomException(NOT_FOUND));
+
         List<SeatingWithCountDto> seatingWithCount = stadiumRepository.findSeatingWithCount(sectionId);
 
-        return new SeatingListRes(seatingWithCount);
+        return new SeatingListRes(section, seatingWithCount);
     }
 
     @Override

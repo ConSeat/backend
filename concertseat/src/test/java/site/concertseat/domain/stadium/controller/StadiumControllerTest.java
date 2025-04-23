@@ -21,6 +21,7 @@ import static com.fasterxml.jackson.databind.jsonFormatVisitors.JsonFormatTypes.
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.operation.preprocess.Preprocessors.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
@@ -37,80 +38,46 @@ public class StadiumControllerTest {
     private MockMvc mockMvc;
 
     @Test
-    public void 콘서트_목록_조회_기본값_검색_성공() throws Exception {
-        // given
-        int stadiumId = 1;
+    public void 콘서트장_목록_조회_성공() throws Exception {
+        //given
 
-        // when
+        //when
         ResultActions actions = mockMvc.perform(
-                get("/api/stadiums/{stadiumId}/concerts", stadiumId)
+                get("/api/stadiums")
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
         );
 
-        // then
+        //then
         actions
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
                 .andDo(document(
-                        "콘서트 목록 조회 성공(기본값)",
+                        "콘서트장 목록 조회 성공",
                         preprocessRequest(prettyPrint()),
                         preprocessResponse(prettyPrint()),
                         resource(ResourceSnippetParameters.builder()
                                 .tag("Stadium API")
-                                .summary("콘서트 목록 조회 API")
+                                .summary("콘서트장 목록 조회 API")
                                 .responseFields(
                                         getCommonResponseFields(
-                                                fieldWithPath("body.concerts[].concertId").type(NUMBER)
-                                                        .description("콘서트 아이디"),
-                                                fieldWithPath("body.concerts[].concertName").type(STRING)
-                                                        .description("콘서트 이름")
-
+                                                fieldWithPath("body.active[].stadiumId").type(NUMBER)
+                                                        .description("활성화된 콘서트장 Id"),
+                                                fieldWithPath("body.active[].stadiumName").type(STRING)
+                                                        .description("활성화된 콘서트장 이름"),
+                                                fieldWithPath("body.active[].stadiumImage").type(STRING)
+                                                        .description("활성화된 콘서트장 이미지 src"),
+                                                fieldWithPath("body.inactive[].stadiumId").type(NUMBER)
+                                                        .description("비활성화된 콘서트장 Id"),
+                                                fieldWithPath("body.inactive[].stadiumName").type(STRING)
+                                                        .description("비활성화된 콘서트장 이름"),
+                                                fieldWithPath("body.inactive[].stadiumImage").type(STRING)
+                                                        .description("비활성화된 콘서트장 이미지 src"),
+                                                fieldWithPath("body.totalReviewCount").type(NUMBER)
+                                                        .description("전체 리뷰 개수")
                                         )
                                 )
-                                .responseSchema(Schema.schema("콘서트 목록 조회 Response"))
-                                .build()
-                        ))
-                );
-    }
-
-    @Test
-    public void 콘서트_목록_조회_조건_검색_성공() throws Exception {
-        // given
-        int stadiumId = 1;
-
-        // when
-        ResultActions actions = mockMvc.perform(
-                get("/api/stadiums/{stadiumId}/concerts", stadiumId)
-                        .param("query", "TOMORROW")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        // then
-        actions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
-                .andDo(document(
-                        "콘서트 목록 조회 성공(검색조건 있는 경우)",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        resource(ResourceSnippetParameters.builder()
-                                .tag("Stadium API")
-                                .summary("콘서트 목록 조회 API")
-                                .queryParameters(
-                                        parameterWithName("query").description("검색할 콘서트 이름").optional()
-                                )
-                                .responseFields(
-                                        getCommonResponseFields(
-                                                fieldWithPath("body.concerts[].concertId").type(NUMBER)
-                                                        .description("콘서트 아이디"),
-                                                fieldWithPath("body.concerts[].concertName").type(STRING)
-                                                        .description("콘서트 이름")
-
-                                        )
-                                )
-                                .responseSchema(Schema.schema("콘서트 목록 조회 Response"))
+                                .responseSchema(Schema.schema("콘서트장 목록 조회 Response"))
                                 .build()
                         ))
                 );
@@ -196,6 +163,234 @@ public class StadiumControllerTest {
     }
 
     @Test
+    public void 구역_리스트_조회_성공() throws Exception {
+        //given
+        int stadiumId = 1;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/{stadiumId}/sections", stadiumId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "구역 리스트 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("구역 리스트 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.floors").type(ARRAY)
+                                                        .description("층 목록"),
+                                                fieldWithPath("body.floors[].name").type(STRING)
+                                                        .description("층 이름"),
+                                                fieldWithPath("body.floors[].sections").type(ARRAY)
+                                                        .description("구역 목록"),
+                                                fieldWithPath("body.floors[].sections[].sectionId").type(NUMBER)
+                                                        .description("구역 아이디"),
+                                                fieldWithPath("body.floors[].sections[].name").type(STRING)
+                                                        .description("구역 이름")
+                                        )
+                                )
+                                .responseSchema(Schema.schema("구역 리스트 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 구역_리스트_조회_실패_없는_공연장_아이디() throws Exception {
+        //given
+        int stadiumId = 10001;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/{stadiumId}/sections", stadiumId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "구역 리스트 조회 실패 - 존재하지 않는 공연장 아이디",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("구역 리스트 조회 API")
+                                .responseSchema(Schema.schema("구역 리스트 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 좌석_리스트_조회_성공() throws Exception {
+        //given
+        int sectionId = 4;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/sections/{sectionId}/seating", sectionId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "좌석(열) 리스트 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("좌석(열) 리스트 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.sectionInfo").type(STRING)
+                                                        .description("구역 정보"),
+                                                fieldWithPath("body.seating").type(ARRAY)
+                                                    .description("좌석(열) 목록"),
+                                                fieldWithPath("body.seating[].seatingId").type(NUMBER)
+                                                        .description("좌석(열) 아이디"),
+                                                fieldWithPath("body.seating[].name").type(STRING)
+                                                        .description("좌석(열) 이름"),
+                                                fieldWithPath("body.seating[].reviewCount").type(NUMBER)
+                                                        .description("리뷰 개수")
+                                        )
+                                )
+                                .responseSchema(Schema.schema("좌석(열) 리스트 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 좌석_리스트_조회_실패_없는_공연장_아이디() throws Exception {
+        //given
+        int sectionId = 10004;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/sections/{sectionId}/seating", sectionId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "좌석(열) 리스트 조회 실패 - 없는 공연장 아이디",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("좌석(열) 리스트 조회 API")
+                                .responseSchema(Schema.schema("좌석(열) 리스트 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 콘서트_목록_조회_기본값_검색_성공() throws Exception {
+        // given
+        int stadiumId = 1;
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/{stadiumId}/concerts", stadiumId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "콘서트 목록 조회 성공(기본값)",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("콘서트 목록 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.concerts[].concertId").type(NUMBER)
+                                                        .description("콘서트 아이디"),
+                                                fieldWithPath("body.concerts[].concertName").type(STRING)
+                                                        .description("콘서트 이름")
+
+                                        )
+                                )
+                                .responseSchema(Schema.schema("콘서트 목록 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 콘서트_목록_조회_조건_검색_성공() throws Exception {
+        // given
+        int stadiumId = 1;
+
+        // when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/{stadiumId}/concerts", stadiumId)
+                        .param("query", "TOMORROW")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "콘서트 목록 조회 성공(검색조건 있는 경우)",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("콘서트 목록 조회 API")
+                                .queryParameters(
+                                        parameterWithName("query").description("검색할 콘서트 이름").optional()
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.concerts[].concertId").type(NUMBER)
+                                                        .description("콘서트 아이디"),
+                                                fieldWithPath("body.concerts[].concertName").type(STRING)
+                                                        .description("콘서트 이름")
+
+                                        )
+                                )
+                                .responseSchema(Schema.schema("콘서트 목록 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
     public void 콘서트장_특징_정보_조회_성공() throws Exception {
         //given
 
@@ -264,52 +459,6 @@ public class StadiumControllerTest {
                                         )
                                 )
                                 .responseSchema(Schema.schema("콘서트장 방해요소 조회 Response"))
-                                .build()
-                        ))
-                );
-    }
-
-    @Test
-    public void 콘서트장_목록_조회_성공() throws Exception {
-        //given
-
-        //when
-        ResultActions actions = mockMvc.perform(
-                get("/api/stadiums")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-        );
-
-        //then
-        actions
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
-                .andDo(document(
-                        "콘서트장 목록 조회 성공",
-                        preprocessRequest(prettyPrint()),
-                        preprocessResponse(prettyPrint()),
-                        resource(ResourceSnippetParameters.builder()
-                                .tag("Stadium API")
-                                .summary("콘서트장 목록 조회 API")
-                                .responseFields(
-                                        getCommonResponseFields(
-                                                fieldWithPath("body.active[].stadiumId").type(NUMBER)
-                                                        .description("활성화된 콘서트장 Id"),
-                                                fieldWithPath("body.active[].stadiumName").type(STRING)
-                                                        .description("활성화된 콘서트장 이름"),
-                                                fieldWithPath("body.active[].stadiumImage").type(STRING)
-                                                        .description("활성화된 콘서트장 이미지 src"),
-                                                fieldWithPath("body.inactive[].stadiumId").type(NUMBER)
-                                                        .description("비활성화된 콘서트장 Id"),
-                                                fieldWithPath("body.inactive[].stadiumName").type(STRING)
-                                                        .description("비활성화된 콘서트장 이름"),
-                                                fieldWithPath("body.inactive[].stadiumImage").type(STRING)
-                                                        .description("비활성화된 콘서트장 이미지 src"),
-                                                fieldWithPath("body.totalReviewCount").type(NUMBER)
-                                                        .description("전체 리뷰 개수")
-                                        )
-                                )
-                                .responseSchema(Schema.schema("콘서트장 목록 조회 Response"))
                                 .build()
                         ))
                 );
