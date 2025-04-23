@@ -237,6 +237,80 @@ public class StadiumControllerTest {
     }
 
     @Test
+    public void 좌석_리스트_조회_성공() throws Exception {
+        //given
+        int sectionId = 4;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/sections/{sectionId}/seating", sectionId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "좌석(열) 리스트 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("좌석(열) 리스트 조회 API")
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.sectionInfo").type(STRING)
+                                                        .description("구역 정보"),
+                                                fieldWithPath("body.seating").type(ARRAY)
+                                                    .description("좌석(열) 목록"),
+                                                fieldWithPath("body.seating[].seatingId").type(NUMBER)
+                                                        .description("좌석(열) 아이디"),
+                                                fieldWithPath("body.seating[].name").type(STRING)
+                                                        .description("좌석(열) 이름"),
+                                                fieldWithPath("body.seating[].reviewCount").type(NUMBER)
+                                                        .description("리뷰 개수")
+                                        )
+                                )
+                                .responseSchema(Schema.schema("좌석(열) 리스트 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 좌석_리스트_조회_실패_없는_공연장_아이디() throws Exception {
+        //given
+        int sectionId = 10004;
+
+        //when
+        ResultActions actions = mockMvc.perform(
+                get("/api/stadiums/sections/{sectionId}/seating", sectionId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+                        .with(csrf())
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "좌석(열) 리스트 조회 실패 - 없는 공연장 아이디",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Stadium API")
+                                .summary("좌석(열) 리스트 조회 API")
+                                .responseSchema(Schema.schema("좌석(열) 리스트 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
     public void 콘서트_목록_조회_기본값_검색_성공() throws Exception {
         // given
         int stadiumId = 1;
