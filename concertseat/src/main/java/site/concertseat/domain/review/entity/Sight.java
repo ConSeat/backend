@@ -29,4 +29,8 @@ public class Sight {
     @NotNull
     @Column
     private String compressedImage;
+
+    public void updateCompressedImage(String compressedImage) {
+        this.compressedImage = compressedImage;
+    }
 }

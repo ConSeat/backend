@@ -11,7 +11,7 @@ public interface S3Service {
 
     List<String> uploadMultipleFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException;
 
-    List<String> convertCompressedMultipartFiles(List<String> fileUrls) throws IOException;
+    String uploadCompressedImage(String fileUrl) throws IOException;
 
     void deleteFolder(String folderPath) throws CustomException;
 

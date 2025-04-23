@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class ApproveReviewReq {
+public class ChangeReviewStatusReq {
     @NotBlank
     private String reviewStatus;
 

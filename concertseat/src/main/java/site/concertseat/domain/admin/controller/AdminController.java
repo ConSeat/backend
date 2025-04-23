@@ -5,7 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
-import site.concertseat.domain.admin.dto.req.ApproveReviewReq;
+import site.concertseat.domain.admin.dto.req.ChangeReviewStatusReq;
 import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
 import site.concertseat.domain.admin.service.AdminService;
@@ -39,11 +39,11 @@ public class AdminController {
         return ResponseDto.success(OK, result);
     }
 
-    @PatchMapping("/reviews/{reviewId}/approval")
-    public ResponseDto<Void> approveReview(@LoginMember Member member,
-                                           @PathVariable Long reviewId,
-                                           @RequestBody ApproveReviewReq request) {
-        adminService.approveReview(member, reviewId, request);
+    @PatchMapping("/reviews/{reviewId}")
+    public ResponseDto<Void> changeReviewStatus(@LoginMember Member member,
+                                                @PathVariable Long reviewId,
+                                                @RequestBody ChangeReviewStatusReq request) {
+        adminService.changeReviewStatus(member, reviewId, request);
 
         return ResponseDto.success(NO_CONTENT);
     }

@@ -9,7 +9,7 @@ import org.yaml.snakeyaml.util.EnumUtils;
 import site.concertseat.domain.admin.dto.AdminReviewDto;
 import site.concertseat.domain.admin.dto.BookmarksAndLikesCountDto;
 import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
-import site.concertseat.domain.admin.dto.req.ApproveReviewReq;
+import site.concertseat.domain.admin.dto.req.ChangeReviewStatusReq;
 import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
 import site.concertseat.domain.admin.repository.AdminReviewRepository;
@@ -21,20 +21,24 @@ import site.concertseat.domain.review.entity.Sight;
 import site.concertseat.domain.review.enums.ReviewStatus;
 import site.concertseat.global.dto.PageDto;
 import site.concertseat.global.exception.CustomException;
+import site.concertseat.global.s3.S3Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static site.concertseat.global.statuscode.ErrorCode.BAD_REQUEST;
-import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
+import static site.concertseat.domain.review.enums.ReviewStatus.APPROVED;
+import static site.concertseat.domain.review.enums.ReviewStatus.REJECTED;
+import static site.concertseat.global.statuscode.ErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
     private final AdminReviewRepository reviewRepository;
+    private final S3Service s3Service;
 
     @Override
     public AdminReviewListRes findAdminReviews(Pageable pageable, AdminReviewListReq adminReviewListReq) {
@@ -102,7 +106,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public void approveReview(Member member, Long reviewId, ApproveReviewReq request) {
+    public void changeReviewStatus(Member member, Long reviewId, ChangeReviewStatusReq request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND));
 
@@ -110,13 +114,13 @@ public class AdminServiceImpl implements AdminService {
 
         ReviewStatus status = ReviewStatus.valueOf(request.getReviewStatus().toUpperCase());
 
-        if(status == ReviewStatus.APPROVED) {
-            throw new CustomException(BAD_REQUEST);
-        }
-
         updateReviewStatus(review, status);
 
-        if(status == ReviewStatus.REJECTED) {
+        if (status == APPROVED) {
+            updateCompressedImage(review);
+        }
+
+        if (status == REJECTED) {
             validateRejectReason(request.getRejectReason());
             updateRejectReason(review, request.getRejectReason());
         }
@@ -141,6 +145,20 @@ public class AdminServiceImpl implements AdminService {
     private void validateRejectReason(String rejectReason) {
         if(rejectReason == null || rejectReason.trim().isEmpty()) {
             throw new CustomException(BAD_REQUEST);
+        }
+    }
+
+    private void updateCompressedImage(Review review) {
+        List<Sight> sights = reviewRepository.findSightsByReview(review.getId());
+
+        for (Sight sight : sights) {
+            if (!sight.getImage().equals(sight.getCompressedImage())) continue;
+
+            try {
+                String compressedImage = s3Service.uploadCompressedImage(sight.getImage());
+
+                sight.updateCompressedImage(compressedImage);
+            } catch (IOException ignored) {}
         }
     }
 }
