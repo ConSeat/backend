@@ -79,6 +79,11 @@ public class StadiumServiceImpl implements StadiumService {
     @Override
     public SectionListRes findSections(Integer stadiumId) {
         List<Floor> floors = stadiumRepository.findFloorsByStadiumId(stadiumId);
+
+        if (floors.isEmpty()) {
+            throw new CustomException(NOT_FOUND);
+        }
+
         List<Section> sections = stadiumRepository.findSectionsByFloors(floors);
 
         return new SectionListRes(floors, sections);
