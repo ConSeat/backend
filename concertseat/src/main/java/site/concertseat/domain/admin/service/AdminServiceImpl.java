@@ -21,6 +21,7 @@ import site.concertseat.domain.review.entity.Sight;
 import site.concertseat.domain.review.enums.ReviewStatus;
 import site.concertseat.global.dto.PageDto;
 import site.concertseat.global.exception.CustomException;
+import site.concertseat.global.redis.RedisUtils;
 import site.concertseat.global.s3.S3Service;
 
 import java.util.List;
@@ -38,6 +39,7 @@ import static site.concertseat.global.statuscode.ErrorCode.*;
 public class AdminServiceImpl implements AdminService {
     private final AdminReviewRepository reviewRepository;
     private final S3Service s3Service;
+    private final RedisUtils redisUtils;
 
     @Override
     public AdminReviewListRes findAdminReviews(Pageable pageable, AdminReviewListReq adminReviewListReq) {
@@ -123,6 +125,8 @@ public class AdminServiceImpl implements AdminService {
             validateRejectReason(request.getRejectReason());
             updateRejectReason(review, request.getRejectReason());
         }
+
+        redisUtils.deleteData("reviewCount");
     }
 
     private void updateReviewStatus(Review review, ReviewStatus status) {
