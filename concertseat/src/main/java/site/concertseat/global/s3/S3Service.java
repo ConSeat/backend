@@ -1,5 +1,7 @@
 package site.concertseat.global.s3;
 
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.MetadataException;
 import org.springframework.web.multipart.MultipartFile;
 import site.concertseat.global.exception.CustomException;
 
@@ -11,7 +13,7 @@ public interface S3Service {
 
     List<String> uploadMultipleFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException;
 
-    String uploadCompressedImage(String fileUrl) throws IOException;
+    String uploadCompressedImage(String fileUrl) throws IOException, ImageProcessingException, MetadataException;
 
     void deleteFolder(String folderPath) throws CustomException;
 

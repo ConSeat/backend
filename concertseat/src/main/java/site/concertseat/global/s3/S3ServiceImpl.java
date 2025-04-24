@@ -3,6 +3,8 @@ package site.concertseat.global.s3;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.MetadataException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,11 +19,16 @@ import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageOutputStream;
 import javax.imageio.stream.MemoryCacheImageOutputStream;
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.List;
+
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.exif.ExifIFD0Directory;
 
 import static site.concertseat.global.statuscode.ErrorCode.*;
 import static site.concertseat.global.util.DateFormatter.convertToTime;
@@ -122,12 +129,25 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public String uploadCompressedImage(String fileUrl) throws IOException {
+    public String uploadCompressedImage(String fileUrl) throws IOException, ImageProcessingException, MetadataException {
         String fileKey = fileUrl.replace(bucketUrl, "");
 
         S3Object s3Object = amazonS3Client.getObject(bucket, fileKey);
         S3ObjectInputStream s3InputStream = s3Object.getObjectContent();
+
+        Metadata metadata = ImageMetadataReader.readMetadata(s3InputStream);
+        ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+
+        int orientation = 1;
+        if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+            orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+        }
+
+        s3Object = amazonS3Client.getObject(bucket, fileKey);
+        s3InputStream = s3Object.getObjectContent();
         BufferedImage image = ImageIO.read(s3InputStream);
+
+        image = transformImageByOrientation(image, orientation);
 
         if (image.getTransparency() == Transparency.TRANSLUCENT) {
             BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
@@ -173,6 +193,43 @@ public class S3ServiceImpl implements S3Service {
             throw new CustomException(FILE_EXTENSION_FAIL);
         }
     }
+
+    private BufferedImage transformImageByOrientation(BufferedImage image, int orientation) {
+        int w = image.getWidth();
+        int h = image.getHeight();
+        AffineTransform transform = new AffineTransform();
+
+        switch (orientation) {
+            case 6:
+                transform.translate(h, 0);
+                transform.rotate(Math.toRadians(90));
+                break;
+            case 3:
+                transform.translate(w, h);
+                transform.rotate(Math.toRadians(180));
+                break;
+            case 8:
+                transform.translate(0, w);
+                transform.rotate(Math.toRadians(270));
+                break;
+            default:
+                return image;
+        }
+
+        BufferedImage rotatedImage = new BufferedImage(
+                orientation == 6 || orientation == 8 ? h : w,
+                orientation == 6 || orientation == 8 ? w : h,
+                BufferedImage.TYPE_INT_RGB
+        );
+
+        Graphics2D g2d = rotatedImage.createGraphics();
+        g2d.setTransform(transform);
+        g2d.drawImage(image, 0, 0, null);
+        g2d.dispose();
+
+        return rotatedImage;
+    }
+
 
     @Override
     public void deleteFolder(String folderPath) throws CustomException {

@@ -45,6 +45,7 @@ dependencies {
 	//이미지 압축 관련 라이브러리
 	implementation 'com.twelvemonkeys.imageio:imageio-core:3.12.0'
 	implementation 'com.twelvemonkeys.imageio:imageio-webp:3.12.0'
+	implementation 'com.drewnoakes:metadata-extractor:2.19.0'
 
 	//querydsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
