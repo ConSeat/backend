@@ -23,7 +23,6 @@ import site.concertseat.global.dto.PageDto;
 import site.concertseat.global.exception.CustomException;
 import site.concertseat.global.s3.S3Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -158,7 +157,7 @@ public class AdminServiceImpl implements AdminService {
                 String compressedImage = s3Service.uploadCompressedImage(sight.getImage());
 
                 sight.updateCompressedImage(compressedImage);
-            } catch (IOException ignored) {}
+            } catch (Exception ignored) {}
         }
     }
 }
