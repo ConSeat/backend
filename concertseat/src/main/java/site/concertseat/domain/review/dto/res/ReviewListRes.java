@@ -9,4 +9,6 @@ import site.concertseat.global.dto.SliceDto;
 @AllArgsConstructor
 public class ReviewListRes {
     private SliceDto<ReviewDto> reviews;
+
+    private Long reviewCount;
 }

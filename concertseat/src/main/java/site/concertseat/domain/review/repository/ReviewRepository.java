@@ -47,6 +47,12 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
 
     @Query("select count(r) " +
             "from Review r " +
+            "where r.seating.id = :seatingId " +
+            "and r.status = 'APPROVED'")
+    Long countReviewsBySeatingId(Integer seatingId);
+
+    @Query("select count(r) " +
+            "from Review r " +
             "where r.status = :status")
     Integer countApprovedReviews(@Param("status") ReviewStatus status);
 

@@ -1858,6 +1858,8 @@ public class ReviewControllerTest {
                                 )
                                 .responseFields(
                                         getCommonResponseFields(
+                                                fieldWithPath("body.reviewCount").type(NUMBER)
+                                                        .description("리뷰 개수"),
                                                 fieldWithPath("body.reviews.content[].reviewId").type(NUMBER)
                                                         .description("리뷰 아이디"),
                                                 fieldWithPath("body.reviews.content[].writerNickname").type(STRING)
