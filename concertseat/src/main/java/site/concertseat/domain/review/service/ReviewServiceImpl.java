@@ -170,7 +170,9 @@ public class ReviewServiceImpl implements ReviewService {
         setObstructions(reviewIds, reviews.getContent());
         setIsLikedAndIsBookmarked(member, reviewIds, reviews.getContent());
 
-        return new ReviewListRes(new SliceDto<>(reviews));
+        Long reviewCount = reviewRepository.countReviewsBySeatingId(seatingId);
+
+        return new ReviewListRes(new SliceDto<>(reviews), reviewCount);
     }
 
     private void setImages(List<Long> reviews, List<ReviewDto> reviewDto) {
