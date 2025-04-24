@@ -30,7 +30,6 @@ import com.drew.imaging.ImageMetadataReader;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.exif.ExifIFD0Directory;
 
-
 import static site.concertseat.global.statuscode.ErrorCode.*;
 import static site.concertseat.global.util.DateFormatter.convertToTime;
 
