@@ -8,7 +8,9 @@ import site.concertseat.domain.review.dto.req.MyReviewSearchReq;
 import site.concertseat.domain.review.dto.req.ReviewListReq;
 
 public interface CustomReviewRepository {
-    Slice<ReviewDto> findReviews(ReviewListReq reviewListReq, Integer seatingId,Pageable pageable);
+    Slice<ReviewDto> findReviews(ReviewListReq reviewListReq, Integer seatingId, Pageable pageable);
+
+    Long countReviews(Integer seatingId, ReviewListReq reviewListReq);
 
     Slice<MyReviewDto> findMyReviews(Long memberId, MyReviewSearchReq req, Pageable pageable);
 }
