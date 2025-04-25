@@ -170,7 +170,7 @@ public class ReviewServiceImpl implements ReviewService {
         setObstructions(reviewIds, reviews.getContent());
         setIsLikedAndIsBookmarked(member, reviewIds, reviews.getContent());
 
-        Long reviewCount = reviewRepository.countReviewsBySeatingId(seatingId);
+        Long reviewCount = reviewRepository.countReviews(seatingId, reviewListReq);
 
         return new ReviewListRes(new SliceDto<>(reviews), reviewCount);
     }

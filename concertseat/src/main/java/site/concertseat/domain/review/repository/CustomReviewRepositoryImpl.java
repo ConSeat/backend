@@ -164,6 +164,29 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
     }
 
     @Override
+    public Long countReviews(Integer seatingId, ReviewListReq reviewListReq) {
+        JPAQuery<Long> query = queryFactory
+                .select(review.count())
+                .from(review)
+                .where(review.seating.id.eq(seatingId))
+                .where(review.status.eq(APPROVED));
+
+        if (!reviewListReq.getFeatures().isEmpty()) {
+            query.join(reviewFeature)
+                    .on(reviewFeature.review.id.eq(review.id))
+                    .where(reviewFeature.feature.id.in(reviewListReq.getFeatures()));
+        }
+
+        if (!reviewListReq.getObstructions().isEmpty()) {
+            query.join(reviewObstruction)
+                    .on(reviewObstruction.review.id.eq(review.id))
+                    .where(reviewObstruction.obstruction.id.in(reviewListReq.getObstructions()));
+        }
+
+        return query.fetchFirst();
+    }
+
+    @Override
     public Slice<MyReviewDto> findMyReviews(Long memberId, MyReviewSearchReq req, Pageable pageable) {
         BooleanBuilder where = new BooleanBuilder();
 
