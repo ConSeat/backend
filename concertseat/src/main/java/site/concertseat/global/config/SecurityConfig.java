@@ -19,6 +19,7 @@ import site.concertseat.global.jwt.filter.JwtAuthenticationFilter;
 import site.concertseat.global.jwt.service.JwtUtils;
 import site.concertseat.global.oauth.CustomOAuth2UserService;
 import site.concertseat.global.oauth.Oauth2SuccessHandler;
+import site.concertseat.global.security.CustomAuthenticationEntryPoint;
 
 import java.util.Arrays;
 
@@ -61,6 +62,9 @@ public class SecurityConfig {
                 .cors(corsConfigurer -> corsConfigurer
                         .configurationSource(corsConfigurationSource())
                 )
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class)
                 .oauth2Login(oauth2Configurer -> oauth2Configurer
@@ -72,6 +76,7 @@ public class SecurityConfig {
                                 .userService(oAuth2UserService))
                         .successHandler(oauth2SuccessHandler)
                 );
+
 
         return http.build();
     }
