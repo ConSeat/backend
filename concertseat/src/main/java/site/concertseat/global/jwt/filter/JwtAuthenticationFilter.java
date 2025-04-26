@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +18,7 @@ import site.concertseat.global.jwt.service.JwtUtils;
 
 import java.io.IOException;
 
-import static org.springframework.security.oauth2.core.OAuth2ErrorCodes.INVALID_TOKEN;
+import static site.concertseat.global.statuscode.ErrorCode.INVALID_ACCESS_TOKEN;
 
 @AllArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
@@ -58,10 +57,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private void sendInvalidTokenError(HttpServletResponse response) throws IOException {
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(INVALID_ACCESS_TOKEN.getHttpStatusCode());
         response.setContentType("application/json");
 
-        ResponseData res = new ResponseData(new ResponseHeader(INVALID_TOKEN), null);
+        ResponseData res = new ResponseData(new ResponseHeader(INVALID_ACCESS_TOKEN.getMessage()), null);
         response.getWriter().write(new ObjectMapper().writeValueAsString(res));
     }
 }

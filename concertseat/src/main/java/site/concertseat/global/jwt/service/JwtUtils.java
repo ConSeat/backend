@@ -26,7 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static site.concertseat.global.statuscode.ErrorCode.INVALID_TOKEN;
+import static site.concertseat.global.statuscode.ErrorCode.INVALID_REFRESH_TOKEN;
 
 @Component
 @RequiredArgsConstructor
@@ -69,7 +69,7 @@ public class JwtUtils {
         String uuid = getUuid(refresh, false);
 
         Member member = memberRepository.findByUuid(uuid)
-                .orElseThrow(() -> new CustomException(INVALID_TOKEN));
+                .orElseThrow(() -> new CustomException(INVALID_REFRESH_TOKEN));
 
         String accessToken = createAccessToken(uuid, member.getRole());
 
@@ -88,13 +88,13 @@ public class JwtUtils {
         Cookie cookie = cookieUtils.getCookieFromRequest(request, "refresh");
 
         if (cookie == null) {
-            throw new CustomException(INVALID_TOKEN);
+            throw new CustomException(INVALID_REFRESH_TOKEN);
         }
 
         String refresh = cookie.getValue();
 
         if (!(validateRefreshToken(refresh, userAgent))) {
-            throw new CustomException(INVALID_TOKEN);
+            throw new CustomException(INVALID_REFRESH_TOKEN);
         }
 
         return refresh;
