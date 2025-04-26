@@ -40,6 +40,9 @@ public class MemberServiceImpl implements MemberService {
     @Override
     @Transactional
     public MemberModifyRes modifyMember(Member member, MemberModifyReq memberModifyReq) {
+        member = memberRepository.findByUuid(member.getUuid())
+                        .orElseThrow(() -> new CustomException(NOT_FOUND));
+
         updateMember(member, memberModifyReq);
 
         return new MemberModifyRes(member.getNickname(), member.getSrc());
