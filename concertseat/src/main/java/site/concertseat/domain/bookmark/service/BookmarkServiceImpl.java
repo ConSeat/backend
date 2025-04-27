@@ -66,8 +66,6 @@ public class BookmarkServiceImpl implements BookmarkService {
         Bookmark bookmark = bookmarkRepository.findById(bookmarkId)
                 .orElseGet(() -> new Bookmark(bookmarkId, member, review));
 
-        bookmark.restore();
-
         bookmarkRepository.save(bookmark);
     }
 
@@ -78,10 +76,6 @@ public class BookmarkServiceImpl implements BookmarkService {
                 .orElseThrow(() -> new CustomException(NOT_FOUND));
 
         BookmarkId bookmarkId = new BookmarkId(member.getId(), reviewId);
-
-        if (!bookmarkRepository.existsById(bookmarkId)) {
-            throw new CustomException(NOT_FOUND);
-        }
 
         bookmarkRepository.deleteById(bookmarkId);
     }
