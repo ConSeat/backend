@@ -165,23 +165,37 @@ public class CustomReviewRepositoryImpl implements CustomReviewRepository {
 
     @Override
     public Long countReviews(Integer seatingId, ReviewListReq reviewListReq) {
-        JPAQuery<Long> query = queryFactory
-                .select(review.count())
+        JPAQuery<Long> sub = queryFactory
+                .select(review.id)
                 .from(review)
                 .where(review.seating.id.eq(seatingId))
                 .where(review.status.eq(APPROVED));
 
+        BooleanBuilder havingBuilder = new BooleanBuilder();
+
         if (!reviewListReq.getFeatures().isEmpty()) {
-            query.join(reviewFeature)
-                    .on(reviewFeature.review.id.eq(review.id))
-                    .where(reviewFeature.feature.id.in(reviewListReq.getFeatures()));
+            sub.leftJoin(reviewFeature)
+                    .on(reviewFeature.review.id.eq(review.id)
+                            .and(reviewFeature.feature.id.in(reviewListReq.getFeatures())));
+            havingBuilder.and(reviewFeature.countDistinct().eq((long) reviewListReq.getFeatures().size()));
         }
 
         if (!reviewListReq.getObstructions().isEmpty()) {
-            query.join(reviewObstruction)
-                    .on(reviewObstruction.review.id.eq(review.id))
-                    .where(reviewObstruction.obstruction.id.in(reviewListReq.getObstructions()));
+            sub.leftJoin(reviewObstruction)
+                    .on(reviewObstruction.review.id.eq(review.id)
+                            .and(reviewObstruction.obstruction.id.in(reviewListReq.getObstructions())));
+            havingBuilder.and(reviewObstruction.countDistinct().eq((long) reviewListReq.getObstructions().size()));
         }
+
+        if (havingBuilder.hasValue()) {
+            sub.groupBy(review.id)
+                    .having(havingBuilder);
+        }
+
+        JPAQuery<Long> query = queryFactory
+                .select(review.id.countDistinct())
+                .from(review)
+                .where(review.id.in(sub));
 
         return query.fetchFirst();
     }
