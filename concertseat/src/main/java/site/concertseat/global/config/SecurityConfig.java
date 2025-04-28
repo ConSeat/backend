@@ -86,7 +86,7 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", frontURL));
+        config.setAllowedOrigins(Arrays.asList("http://localhost:3000", frontURL, "https://conseat-ruddy.vercel.app"));
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
