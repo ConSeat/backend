@@ -25,8 +25,4 @@ public abstract class BaseEntity {
 
     @LastModifiedDate
     private LocalDateTime modifiedAt;
-
-    public void restore() {
-        this.isDeleted = false;
-    }
 }
