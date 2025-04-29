@@ -25,8 +25,7 @@ public class AdminController {
 
     @GetMapping("/reviews")
     public ResponseDto<AdminReviewListRes> adminReviewList(@ModelAttribute AdminReviewListReq adminReviewListReq,
-                                                           @PageableDefault(sort = "modifiedAt", direction = DESC)
-                                                               Pageable pageable) {
+                                                           @PageableDefault(direction = DESC) Pageable pageable) {
         AdminReviewListRes result = adminService.findAdminReviews(pageable, adminReviewListReq);
 
         return ResponseDto.success(OK, result);

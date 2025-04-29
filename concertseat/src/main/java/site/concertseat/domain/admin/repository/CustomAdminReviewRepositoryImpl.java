@@ -36,7 +36,7 @@ public class CustomAdminReviewRepositoryImpl implements CustomAdminReviewReposit
                 .join(seating.section, section).fetchJoin()
                 .join(section.floor, floor).fetchJoin()
                 .join(floor.stadium, stadium).fetchJoin()
-                .orderBy(review.modifiedAt.desc())
+                .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize());
 
