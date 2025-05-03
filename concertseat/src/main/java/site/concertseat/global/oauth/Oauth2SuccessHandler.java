@@ -26,7 +26,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         switch (oAuth2User.getRole()) {
 //            case ROLE_USER -> response.sendRedirect("/callback");
-            case ROLE_USER -> response.sendRedirect("https://conseat-ruddy.vercel.app/callback");
+            case ROLE_USER -> response.sendRedirect("/callback");
             case ROLE_ADMIN -> response.sendRedirect("/admin/callback");
         }
     }
