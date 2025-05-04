@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import site.concertseat.domain.bookmark.service.BookmarkService;
 import site.concertseat.domain.member.entity.Member;
+import site.concertseat.domain.review.dto.res.ReviewImagesRes;
 import site.concertseat.domain.review.dto.req.MyReviewSearchReq;
 import site.concertseat.domain.review.dto.req.ReviewListReq;
 import site.concertseat.domain.review.dto.req.ReviewPostReq;
@@ -120,5 +121,12 @@ public class ReviewController {
         reviewService.deleteLike(member, reviewId);
 
         return ResponseDto.success(NO_CONTENT);
+    }
+
+    @GetMapping("/{reviewId}/images")
+    public ResponseDto<ReviewImagesRes> reviewImages(@PathVariable("reviewId") Long reviewId) {
+        ReviewImagesRes result = reviewService.findImages(reviewId);
+
+        return ResponseDto.success(OK, result);
     }
 }

@@ -81,4 +81,10 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
             "where r.member.id = :memberId " +
             "and r.id = :reviewId")
     Optional<MyReviewDetailDto> findMyReview(@Param("memberId") Long memberId, @Param("reviewId") Long reviewId);
+
+    @Query("select s.image " +
+            "from Sight s " +
+            "where s.review.id = :reviewId " +
+            "and s.review.status = 'APPROVED'")
+    List<String> findImagesByReviewId(@Param("reviewId") Long reviewId);
 }
