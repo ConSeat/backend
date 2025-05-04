@@ -303,4 +303,15 @@ public class ReviewServiceImpl implements ReviewService {
 
         likesRepository.deleteById(likesId);
     }
+
+    @Override
+    public ReviewImagesRes findImages(Long reviewId) {
+        List<String> images = reviewRepository.findImagesByReviewId(reviewId);
+
+        if (images.isEmpty()) {
+            throw new CustomException(NOT_FOUND);
+        }
+
+        return new ReviewImagesRes(images);
+    }
 }

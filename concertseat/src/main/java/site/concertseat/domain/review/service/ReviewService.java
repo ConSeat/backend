@@ -31,4 +31,6 @@ public interface ReviewService {
     void addLike(Member member, Long reviewId);
 
     void deleteLike(Member member, Long reviewId);
+
+    ReviewImagesRes findImages(Long reviewId);
 }
