@@ -124,3 +124,6 @@ insert into review_obstruction(review_id, obstruction_id) values
     (2, 2),
     (101, 2),
     (102, 2);
+
+insert into sight(sight_id, review_id, image, compressed_image) values
+    (1, 1, 'https://conseat.s3.ap-northeast-2.amazonaws.com/members/1/review/upload_2025-04-23-21.03.21-01.png', 'https://conseat.s3.ap-northeast-2.amazonaws.com/members/1/review/upload_2025-04-23-21.03.21-01_compress.jpeg');

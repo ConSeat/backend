@@ -1901,4 +1901,80 @@ public class ReviewControllerTest {
                 );
 
     }
+
+    @Test
+    public void 리뷰_이미지_조회_성공() throws Exception {
+        //given
+        Long reviewId = 1L;
+
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews/{reviewId}/images", reviewId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.header.message").value(OK.getMessage()))
+                .andDo(document(
+                        "리뷰 이미지 조회 성공",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("리뷰 이미지 조회 API")
+                                .pathParameters(
+                                        parameterWithName("reviewId")
+                                                .description("리뷰 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body.images").type(ARRAY)
+                                                        .description("리뷰 이미지 목록")
+                                        )
+                                )
+                                .requestSchema(Schema.schema("리뷰 이미지 조회 Request"))
+                                .responseSchema(Schema.schema("리뷰 이미지 조회 Response"))
+                                .build()
+                        ))
+                );
+    }
+
+    @Test
+    public void 리뷰_이미지_조회_실패_없는_리뷰_아이디() throws Exception {
+        //given
+        Long reviewId = 10001L;
+
+        ResultActions actions = mockMvc.perform(
+                get("/api/reviews/{reviewId}/images", reviewId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .characterEncoding("UTF-8")
+        );
+
+        //then
+        actions
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.header.message").value(NOT_FOUND.getMessage()))
+                .andDo(document(
+                        "리뷰 이미지 조회 실패 - 존재하지 않는 리뷰",
+                        preprocessRequest(prettyPrint()),
+                        preprocessResponse(prettyPrint()),
+                        resource(ResourceSnippetParameters.builder()
+                                .tag("Review API")
+                                .summary("리뷰 이미지 조회 API")
+                                .pathParameters(
+                                        parameterWithName("reviewId")
+                                                .description("리뷰 아이디")
+                                )
+                                .responseFields(
+                                        getCommonResponseFields(
+                                                fieldWithPath("body").type(NULL)
+                                                        .description("내용 없음")
+                                        )
+                                )
+                                .build()
+                        ))
+                );
+    }
 }
