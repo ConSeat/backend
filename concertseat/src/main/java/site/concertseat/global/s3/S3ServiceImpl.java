@@ -110,7 +110,7 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public List<String> uploadMultipleFiles(List<MultipartFile> multipartFiles, String dirName) throws IOException {
+    public List<String> uploadMultipleFiles(List<MultipartFile> multipartFiles, String dirName) {
         if (multipartFiles == null || multipartFiles.isEmpty()) {
             throw new CustomException(FILE_UPLOAD_FAIL);
         }
@@ -132,20 +132,20 @@ public class S3ServiceImpl implements S3Service {
     public String uploadCompressedImage(String fileUrl) throws IOException, ImageProcessingException, MetadataException {
         String fileKey = fileUrl.replace(bucketUrl, "");
 
-        S3Object s3Object = amazonS3Client.getObject(bucket, fileKey);
-        S3ObjectInputStream s3InputStream = s3Object.getObjectContent();
-
-        Metadata metadata = ImageMetadataReader.readMetadata(s3InputStream);
-        ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-
         int orientation = 1;
-        if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
-            orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+        try (S3ObjectInputStream metaInputStream = amazonS3Client.getObject(bucket, fileKey).getObjectContent()) {
+            Metadata metadata = ImageMetadataReader.readMetadata(metaInputStream);
+            ExifIFD0Directory directory = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+
+            if (directory != null && directory.containsTag(ExifIFD0Directory.TAG_ORIENTATION)) {
+                orientation = directory.getInt(ExifIFD0Directory.TAG_ORIENTATION);
+            }
         }
 
-        s3Object = amazonS3Client.getObject(bucket, fileKey);
-        s3InputStream = s3Object.getObjectContent();
-        BufferedImage image = ImageIO.read(s3InputStream);
+        BufferedImage image;
+        try (S3ObjectInputStream imageInputStream = amazonS3Client.getObject(bucket, fileKey).getObjectContent()) {
+            image = ImageIO.read(imageInputStream);
+        }
 
         image = transformImageByOrientation(image, orientation);
 
@@ -182,6 +182,7 @@ public class S3ServiceImpl implements S3Service {
             writer.dispose();
         }
     }
+
     private String convertToCompressedUrl(String url) {
         int lastDotIndex = url.lastIndexOf(".");
 
@@ -229,7 +230,6 @@ public class S3ServiceImpl implements S3Service {
 
         return rotatedImage;
     }
-
 
     @Override
     public void deleteFolder(String folderPath) throws CustomException {

@@ -25,7 +25,6 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(jwtUtils.createRefreshCookie(uuid, userAgent));
 
         switch (oAuth2User.getRole()) {
-//            case ROLE_USER -> response.sendRedirect("/callback");
             case ROLE_USER -> response.sendRedirect("/callback");
             case ROLE_ADMIN -> response.sendRedirect("/admin/callback");
         }
