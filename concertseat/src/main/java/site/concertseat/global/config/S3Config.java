@@ -1,5 +1,7 @@
 package site.concertseat.global.config;
 
+import com.amazonaws.ClientConfiguration;
+import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3Client;
@@ -23,8 +25,15 @@ public class S3Config {
     public AmazonS3Client amazonS3Client() {
         BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
 
+        ClientConfiguration clientConfig = new ClientConfiguration();
+        clientConfig.setMaxConnections(200);
+        clientConfig.setConnectionTimeout(10_000);
+        clientConfig.setSocketTimeout(10_000);
+        clientConfig.setProtocol(Protocol.HTTPS);
+
         return (AmazonS3Client) AmazonS3ClientBuilder.standard()
                 .withRegion(region)
+                .withClientConfiguration(clientConfig)
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
     }
