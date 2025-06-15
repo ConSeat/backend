@@ -1,6 +1,7 @@
 package site.concertseat.global.oauth.response;
 
 import site.concertseat.domain.member.entity.Member;
+import site.concertseat.global.util.NicknameUtils;
 
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public interface OAuth2Response {
         return Member.builder()
                 .uuid(UUID.randomUUID().toString())
                 .socialId(getSocialId())
-                .nickname(getNickname())
+                .nickname(NicknameUtils.createRandomNickname())
                 .src("https://conseat.s3.ap-northeast-2.amazonaws.com/profile/default.png")
                 .role(ROLE_USER)
                 .providerType(getProvider())
