@@ -11,7 +11,6 @@ import site.concertseat.domain.member.repository.MemberRepository;
 import site.concertseat.global.oauth.response.GoogleResponse;
 import site.concertseat.global.oauth.response.KakaoResponse;
 import site.concertseat.global.oauth.response.OAuth2Response;
-import site.concertseat.global.oauth.response.TwitterResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -29,7 +28,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         switch (registration) {
             case "google" -> oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
             case "kakao" -> oAuth2Response = new KakaoResponse(oAuth2User.getAttributes());
-            case "twitter" -> oAuth2Response = new TwitterResponse(oAuth2User.getAttributes());
         }
 
         if (oAuth2Response == null) return null;
