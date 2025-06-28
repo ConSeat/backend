@@ -1,6 +1,7 @@
 package site.concertseat.domain.admin.dto;
 
 import lombok.Data;
+import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.entity.Review;
 import site.concertseat.domain.review.enums.ReviewStatus;
 import site.concertseat.global.util.DateFormatter;
@@ -23,6 +24,10 @@ public class AdminReviewDto {
 
     private Long likesCount;
 
+    private String email;
+
+    private String nickname;
+
     public AdminReviewDto(Review review) {
         this.reviewId = review.getId();
         this.status = review.getStatus();
@@ -30,6 +35,8 @@ public class AdminReviewDto {
         this.createdDate = DateFormatter.convertToDate(review.getCreatedAt());
         this.stadiumName = review.getSeating().getSection().getFloor().getStadium().getName();
         this.seatingInfo = getSeatingInfo(review);
+        this.email = review.getMember().getSocialId();
+        this.nickname = review.getMember().getNickname();
     }
 
     private String getSeatingInfo(Review review) {
