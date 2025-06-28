@@ -12,6 +12,7 @@ import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
 import site.concertseat.domain.admin.dto.req.ChangeReviewStatusReq;
 import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
+import site.concertseat.domain.admin.dto.res.AllReviewListRes;
 import site.concertseat.domain.admin.repository.AdminReviewRepository;
 import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.entity.Feature;
@@ -24,7 +25,6 @@ import site.concertseat.global.exception.CustomException;
 import site.concertseat.global.redis.RedisUtils;
 import site.concertseat.global.s3.S3Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -41,6 +41,7 @@ public class AdminServiceImpl implements AdminService {
     private final AdminReviewRepository reviewRepository;
     private final S3Service s3Service;
     private final RedisUtils redisUtils;
+    private final AdminReviewRepository adminReviewRepository;
 
     @Override
     public AdminReviewListRes findAdminReviews(Pageable pageable, AdminReviewListReq adminReviewListReq) {
@@ -164,5 +165,33 @@ public class AdminServiceImpl implements AdminService {
                 sight.updateCompressedImage(compressedImage);
             } catch (Exception ignored) {}
         }
+    }
+
+    @Override
+    public AllReviewListRes findAllReviews() {
+        List<AdminReviewDto> adminReviews = adminReviewRepository.findAllReviews();
+
+        setBookmarksAndLikesCount(adminReviews);
+
+        return new AllReviewListRes(adminReviews);
+    }
+
+    private void setBookmarksAndLikesCount(List<AdminReviewDto> adminReviews) {
+        List<Long> reviewIds = adminReviews.stream()
+                .map(AdminReviewDto::getReviewId)
+                .toList();
+
+        Map<Long, BookmarksAndLikesCountDto> count = reviewRepository.countBookmarksAndLikes(reviewIds).stream()
+                .collect(Collectors.toMap(
+                        BookmarksAndLikesCountDto::getReviewId,
+                        Function.identity()
+                ));
+
+        adminReviews.forEach(
+                review -> {
+                    BookmarksAndLikesCountDto bookmarksAndLikesCountDto = count.get(review.getReviewId());
+                    review.setBookmarksCount(bookmarksAndLikesCountDto.getBookmarksCount());
+                    review.setLikesCount(bookmarksAndLikesCountDto.getLikesCount());
+                });
     }
 }
