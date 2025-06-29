@@ -50,8 +50,8 @@ public class BookmarkReviewDetailRes {
         this.stadiumName = reviewDetailDto.getStadiumName();
         this.sectionId = reviewDetailDto.getSectionId();
         this.sectionName = reviewDetailDto.getSectionName();
-        this.seatingId = reviewDetailDto.getSeating().getId();
-        this.seatingName = reviewDetailDto.getSeating().getName();
+        this.seatingId = reviewDetailDto.getSeatingId();
+        this.seatingName = reviewDetailDto.getSeatingName();
         this.concertName = reviewDetailDto.getConcertName();
         this.images = images;
         this.contents = reviewDetailDto.getContents();

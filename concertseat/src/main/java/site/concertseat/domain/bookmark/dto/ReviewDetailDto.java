@@ -32,6 +32,4 @@ public class ReviewDetailDto {
     private String seatingName;
 
     private String concertName;
-
-    private Seating seating;
 }
