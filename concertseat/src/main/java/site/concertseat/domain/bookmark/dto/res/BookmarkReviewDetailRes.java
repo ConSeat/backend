@@ -16,6 +16,18 @@ public class BookmarkReviewDetailRes {
 
     private String writerSrc;
 
+    private Integer stadiumId;
+
+    private String stadiumName;
+
+    private Integer sectionId;
+
+    private String sectionName;
+
+    private Integer seatingId;
+
+    private String seatingName;
+
     private String concertName;
 
     private List<String> images;
@@ -34,6 +46,12 @@ public class BookmarkReviewDetailRes {
         this.reviewId = reviewDetailDto.getReviewId();
         this.writerNickname = reviewDetailDto.getWriterNickname();
         this.writerSrc = reviewDetailDto.getWriterSrc();
+        this.stadiumId = reviewDetailDto.getStadiumId();
+        this.stadiumName = reviewDetailDto.getStadiumName();
+        this.sectionId = reviewDetailDto.getSectionId();
+        this.sectionName = reviewDetailDto.getSectionName();
+        this.seatingId = reviewDetailDto.getSeating().getId();
+        this.seatingName = reviewDetailDto.getSeating().getName();
         this.concertName = reviewDetailDto.getConcertName();
         this.images = images;
         this.contents = reviewDetailDto.getContents();
