@@ -15,6 +15,18 @@ public class MyReviewDetailRes {
 
     private String writerSrc;
 
+    private Integer stadiumId;
+
+    private String stadiumName;
+
+    private Integer sectionId;
+
+    private String sectionName;
+
+    private Integer seatingId;
+
+    private String seatingName;
+
     private String concertName;
 
     private List<String> images;
@@ -35,6 +47,12 @@ public class MyReviewDetailRes {
         this.reviewId = reviewDetailDto.getReviewId();
         this.writerNickname = reviewDetailDto.getWriterNickname();
         this.writerSrc = reviewDetailDto.getWriterSrc();
+        this.stadiumId = reviewDetailDto.getStadiumId();
+        this.stadiumName = reviewDetailDto.getStadiumName();
+        this.sectionId = reviewDetailDto.getSectionId();
+        this.sectionName = reviewDetailDto.getSectionName();
+        this.seatingId = reviewDetailDto.getSeatingId();
+        this.seatingName = reviewDetailDto.getSeatingName();
         this.concertName = reviewDetailDto.getConcertName();
         this.images = images;
         this.contents = reviewDetailDto.getContents();

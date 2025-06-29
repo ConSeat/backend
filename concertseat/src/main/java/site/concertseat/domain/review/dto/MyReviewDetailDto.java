@@ -11,9 +11,23 @@ import java.time.LocalDateTime;
 public class MyReviewDetailDto {
     private Long reviewId;
 
+    private Long writerId;
+
     private String writerNickname;
 
     private String writerSrc;
+
+    private Integer stadiumId;
+
+    private String stadiumName;
+
+    private Integer sectionId;
+
+    private String sectionName;
+
+    private Integer seatingId;
+
+    private String seatingName;
 
     private String concertName;
 
