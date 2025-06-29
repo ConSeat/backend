@@ -272,6 +272,18 @@ public class BookmarkControllerTest {
                                                         .description("작성자 닉네임"),
                                                 fieldWithPath("body.writerSrc").type(STRING)
                                                         .description("작성자 프로필 url"),
+                                                fieldWithPath("body.stadiumId").type(NUMBER)
+                                                        .description("경기장 아이디"),
+                                                fieldWithPath("body.stadiumName").type(STRING)
+                                                        .description("경기장 이름"),
+                                                fieldWithPath("body.sectionId").type(NUMBER)
+                                                        .description("구역 아이디"),
+                                                fieldWithPath("body.sectionName").type(STRING)
+                                                        .description("구역 이름"),
+                                                fieldWithPath("body.seatingId").type(NUMBER)
+                                                        .description("좌석(열) 아이디"),
+                                                fieldWithPath("body.seatingName").type(STRING)
+                                                        .description("좌석(열) 이름"),
                                                 fieldWithPath("body.concertName").type(STRING)
                                                         .description("콘서트 이름"),
                                                 fieldWithPath("body.images[]").type(STRING)
