@@ -5,6 +5,10 @@ import org.springframework.data.domain.Pageable;
 import site.concertseat.domain.admin.dto.AdminReviewDto;
 import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
 
+import java.util.List;
+
 public interface CustomAdminReviewRepository {
     Page<AdminReviewDto> findAdminReviews(Pageable pageable, AdminReviewListReq adminReviewListReq);
+
+    List<AdminReviewDto> findAllReviews();
 }
