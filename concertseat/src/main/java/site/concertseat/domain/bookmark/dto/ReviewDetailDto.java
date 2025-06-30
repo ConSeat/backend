@@ -2,6 +2,7 @@ package site.concertseat.domain.bookmark.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import site.concertseat.domain.stadium.entity.Seating;
 
 import java.time.LocalDateTime;
 
@@ -14,9 +15,21 @@ public class ReviewDetailDto {
 
     private String writerSrc;
 
-    private String concertName;
+    private LocalDateTime createdAt;
 
     private String contents;
 
-    private LocalDateTime createdAt;
+    private Integer stadiumId;
+
+    private String stadiumName;
+
+    private Integer sectionId;
+
+    private String sectionName;
+
+    private Integer seatingId;
+
+    private String seatingName;
+
+    private String concertName;
 }

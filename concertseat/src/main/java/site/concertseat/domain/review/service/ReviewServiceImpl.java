@@ -33,8 +33,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static site.concertseat.domain.review.enums.ReviewStatus.APPROVED;
-import static site.concertseat.global.statuscode.ErrorCode.BAD_REQUEST;
-import static site.concertseat.global.statuscode.ErrorCode.NOT_FOUND;
+import static site.concertseat.global.statuscode.ErrorCode.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -271,6 +270,10 @@ public class ReviewServiceImpl implements ReviewService {
     public MyReviewDetailRes myReviewDetails(Member member, Long reviewId) {
         MyReviewDetailDto reviewDto = reviewRepository.findMyReview(member.getId(), reviewId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND));
+
+        if (!member.getId().equals(reviewDto.getWriterId())) {
+            throw new CustomException(FORBIDDEN);
+        }
 
         List<String> images = sightRepository.findByReviewId(reviewId);
         List<String> features = featureRepository.findFeatureByReviewId(reviewId);

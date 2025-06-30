@@ -69,9 +69,16 @@ public interface ReviewRepository extends JpaRepository<Review, Long>, CustomRev
     Optional<Review> findApprovedReview(@Param("reviewId") Long reviewId);
 
     @Query("select new site.concertseat.domain.review.dto.MyReviewDetailDto(" +
-            "r.id," +
+            "r.id, " +
+            "r.member.id, " +
             "r.member.nickname," +
-            "r.member.src," +
+            "r.member.src, " +
+            "r.concert.stadium.id, " +
+            "r.concert.stadium.name, " +
+            "r.seating.section.id, " +
+            "r.seating.section.name, " +
+            "r.seating.id, " +
+            "r.seating.name, " +
             "r.concert.name," +
             "r.contents," +
             "r.createdAt," +

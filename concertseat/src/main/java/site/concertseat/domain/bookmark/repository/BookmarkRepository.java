@@ -32,21 +32,22 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, BookmarkId>,
             "where b.member.id = :memberId")
     List<BookmarkStadiumDto> findStadiums(@Param("memberId") Long memberId);
 
-    @Query("select b " +
-            "from Bookmark b " +
-            "where b.bookmarkId = :bookmarkId " +
-            "and b.isDeleted = true")
-    Optional<Bookmark> findBDeletedBookmarkById(@Param("bookmarkId") Long bookmarkId);
-
     @Query("select new site.concertseat.domain.bookmark.dto.ReviewDetailDto(" +
-            "b.review.id," +
-            "b.review.member.nickname," +
-            "b.review.member.src," +
-            "b.review.concert.name," +
-            "b.review.contents," +
-            "b.review.createdAt)" +
+            "r.id," +
+            "r.member.nickname," +
+            "r.member.src," +
+            "r.createdAt, " +
+            "r.contents, " +
+            "r.concert.stadium.id, " +
+            "r.concert.stadium.name, " +
+            "r.seating.section.id, " +
+            "r.seating.section.name, " +
+            "r.seating.id, " +
+            "r.seating.name, " +
+            "r.concert.name)" +
             "from Bookmark b " +
+            "join b.review r " +
             "where b.member.id = :memberId " +
-            "and b.review.id = :reviewId")
+            "and r.id = :reviewId")
     Optional<ReviewDetailDto> findBookmarkReview(@Param("memberId") Long memberId, @Param("reviewId") Long reviewId);
 }

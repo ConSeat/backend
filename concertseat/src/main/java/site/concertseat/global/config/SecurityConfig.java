@@ -46,6 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/members/**").authenticated()
+                        .requestMatchers("/api/reviews/{reviewId}").authenticated()
                         .requestMatchers(POST, "/api/**").authenticated()
                         .requestMatchers(DELETE, "/api/**").authenticated()
                         .requestMatchers("/api/**", "/h2-console/**", "/docs/**").permitAll()
