@@ -10,8 +10,6 @@ import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
 import site.concertseat.domain.admin.dto.res.AllReviewListRes;
 import site.concertseat.domain.admin.service.AdminService;
-import site.concertseat.domain.member.entity.Member;
-import site.concertseat.global.argument_resolver.LoginMember;
 import site.concertseat.global.dto.ResponseDto;
 
 import static org.springframework.data.domain.Sort.Direction.DESC;
@@ -40,10 +38,16 @@ public class AdminController {
     }
 
     @PatchMapping("/reviews/{reviewId}")
-    public ResponseDto<Void> changeReviewStatus(@LoginMember Member member,
-                                                @PathVariable Long reviewId,
+    public ResponseDto<Void> changeReviewStatus(@PathVariable Long reviewId,
                                                 @RequestBody ChangeReviewStatusReq request) {
-        adminService.changeReviewStatus(member, reviewId, request);
+        adminService.changeReviewStatus(reviewId, request);
+
+        return ResponseDto.success(NO_CONTENT);
+    }
+
+    @DeleteMapping("/reviews/{reviewId}")
+    public ResponseDto<Void> deleteReview(@PathVariable Long reviewId) {
+        adminService.deleteReview(reviewId);
 
         return ResponseDto.success(NO_CONTENT);
     }

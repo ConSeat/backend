@@ -14,7 +14,6 @@ import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
 import site.concertseat.domain.admin.dto.res.AllReviewListRes;
 import site.concertseat.domain.admin.repository.AdminReviewRepository;
-import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.entity.Feature;
 import site.concertseat.domain.review.entity.Obstruction;
 import site.concertseat.domain.review.entity.Review;
@@ -109,7 +108,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public void changeReviewStatus(Member member, Long reviewId, ChangeReviewStatusReq request) {
+    public void changeReviewStatus(Long reviewId, ChangeReviewStatusReq request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND));
 
@@ -193,5 +192,11 @@ public class AdminServiceImpl implements AdminService {
                     review.setBookmarksCount(bookmarksAndLikesCountDto.getBookmarksCount());
                     review.setLikesCount(bookmarksAndLikesCountDto.getLikesCount());
                 });
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long reviewId) {
+        reviewRepository.deleteById(reviewId);
     }
 }
