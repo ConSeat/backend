@@ -13,7 +13,6 @@ import site.concertseat.domain.admin.dto.req.ChangeReviewStatusReq;
 import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
 import site.concertseat.domain.admin.repository.AdminReviewRepository;
-import site.concertseat.domain.member.entity.Member;
 import site.concertseat.domain.review.entity.Feature;
 import site.concertseat.domain.review.entity.Obstruction;
 import site.concertseat.domain.review.entity.Review;
@@ -24,7 +23,6 @@ import site.concertseat.global.exception.CustomException;
 import site.concertseat.global.redis.RedisUtils;
 import site.concertseat.global.s3.S3Service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -108,7 +106,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     @Transactional
-    public void changeReviewStatus(Member member, Long reviewId, ChangeReviewStatusReq request) {
+    public void changeReviewStatus(Long reviewId, ChangeReviewStatusReq request) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new CustomException(NOT_FOUND));
 
@@ -164,5 +162,11 @@ public class AdminServiceImpl implements AdminService {
                 sight.updateCompressedImage(compressedImage);
             } catch (Exception ignored) {}
         }
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(Long reviewId) {
+        reviewRepository.deleteById(reviewId);
     }
 }
