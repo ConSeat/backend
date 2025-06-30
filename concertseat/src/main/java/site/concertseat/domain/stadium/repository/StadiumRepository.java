@@ -39,9 +39,10 @@ public interface StadiumRepository extends JpaRepository<Stadium, Integer> {
     @Query("select new site.concertseat.domain.stadium.dto.SeatingWithCountDto(" +
             "s.id, s.name, count(r)) " +
             "from Seating s " +
-            "left join Review r on r.seating = s " +
-            "where s.section.id = :sectionId " +
+            "left join Review r " +
+            "on r.seating = s " +
             "and r.status = 'APPROVED' " +
+            "where s.section.id = :sectionId " +
             "group by s.id")
     List<SeatingWithCountDto> findSeatingWithCount(@Param("sectionId") Integer sectionId);
 }

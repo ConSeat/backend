@@ -87,4 +87,19 @@ public class CustomAdminReviewRepositoryImpl implements CustomAdminReviewReposit
             query.where(member.nickname.contains(adminReviewListReq.getQuery()));
         }
     }
+
+    @Override
+    public List<AdminReviewDto> findAllReviews() {
+
+        return queryFactory
+                .select(Projections.constructor(AdminReviewDto.class, review))
+                .from(review)
+                .join(review.member, member).fetchJoin()
+                .join(review.seating, seating).fetchJoin()
+                .join(seating.section, section).fetchJoin()
+                .join(section.floor, floor).fetchJoin()
+                .join(floor.stadium, stadium).fetchJoin()
+                .orderBy(review.id.asc())
+                .stream().toList();
+    }
 }

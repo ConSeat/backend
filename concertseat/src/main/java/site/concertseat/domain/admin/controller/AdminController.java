@@ -8,6 +8,7 @@ import site.concertseat.domain.admin.dto.req.AdminReviewListReq;
 import site.concertseat.domain.admin.dto.req.ChangeReviewStatusReq;
 import site.concertseat.domain.admin.dto.res.AdminReviewDetails;
 import site.concertseat.domain.admin.dto.res.AdminReviewListRes;
+import site.concertseat.domain.admin.dto.res.AllReviewListRes;
 import site.concertseat.domain.admin.service.AdminService;
 import site.concertseat.global.dto.ResponseDto;
 
@@ -50,4 +51,12 @@ public class AdminController {
 
         return ResponseDto.success(NO_CONTENT);
     }
+
+    @GetMapping("/reviews/all")
+    public ResponseDto<AllReviewListRes> getAllReviewList() {
+        AllReviewListRes result = adminService.findAllReviews();
+
+        return ResponseDto.success(OK, result);
+    }
+
 }
