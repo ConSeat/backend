@@ -159,11 +159,22 @@ public class AdminServiceImpl implements AdminService {
             if (!sight.getImage().equals(sight.getCompressedImage())) continue;
 
             try {
-                String compressedImage = s3Service.uploadCompressedImage(sight.getImage());
+                String compressedImage = getCompressedImageUrl(sight);
 
                 sight.updateCompressedImage(compressedImage);
             } catch (Exception ignored) {}
         }
+    }
+
+    private static String getCompressedImageUrl(Sight sight) {
+        String originalUrl = sight.getImage();
+
+        String basePath = originalUrl.substring(0, originalUrl.indexOf("/review/") + "/review/".length());
+
+        String fileName = originalUrl.substring(originalUrl.lastIndexOf("/") + 1);
+        String fileNameWithoutExtension = fileName.substring(0, fileName.lastIndexOf("."));
+
+        return basePath + "resized-image/" + fileNameWithoutExtension + ".webp";
     }
 
     @Override
