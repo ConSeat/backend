@@ -37,7 +37,7 @@ import static site.concertseat.global.util.DateFormatter.convertToTime;
 @Service
 @RequiredArgsConstructor
 public class S3ServiceImpl implements S3Service {
-    private static final List<String> SUPPORTED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp");
+    private static final List<String> SUPPORTED_EXTENSIONS = Arrays.asList("jpg", "jpeg", "png", "webp", "heic");
 
     private final AmazonS3Client amazonS3Client;
 
