@@ -21,7 +21,7 @@ import site.concertseat.global.entity.BaseEntity;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@SQLDelete(sql = " UPDATE Review SET is_deleted = true WHERE review_id = ? ")
+@SQLDelete(sql = " UPDATE review SET is_deleted = true WHERE review_id = ? ")
 @SQLRestriction("is_deleted = false")
 @EntityListeners(AuditingEntityListener.class)
 public class Review extends BaseEntity {
