@@ -16,6 +16,7 @@ import site.concertseat.global.jwt.service.JwtUtils;
 import java.io.IOException;
 
 @AllArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private JwtUtils tokenProvider;
     private UserDetailsService userDetailsService;
@@ -24,6 +25,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         String token = tokenProvider.resolveToken(request);
+
+        log.info("JWT token : {}", token);                
 
         if (tokenProvider.validateAccessToken(token)) {
             String uuid = tokenProvider.getUuid(token, true);
