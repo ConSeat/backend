@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers(POST, "/api/**").authenticated()
                         .requestMatchers(DELETE, "/api/**").authenticated()
                         .requestMatchers("/api/**", "/h2-console/**", "/docs/**").permitAll()
+                        .requestMatchers("/actuator/prometheus").permitAll()
                         .anyRequest().authenticated()
                 )
                 .headers(headers -> headers
