@@ -80,3 +80,9 @@ jwt:
   refresh:
     secret: ${JWT_REFRESH_SECRET}
     expiration: ${JWT_REFRESH_EXPIRATION}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "prometheus, health"
