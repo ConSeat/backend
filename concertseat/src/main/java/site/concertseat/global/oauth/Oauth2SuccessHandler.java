@@ -22,6 +22,7 @@ public class Oauth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         String uuid = oAuth2User.getUuid();
         String userAgent = request.getHeader("User-Agent");
 
+        request.getSession().invalidate();
         response.addCookie(jwtUtils.createRefreshCookie(uuid, userAgent));
 
         switch (oAuth2User.getRole()) {

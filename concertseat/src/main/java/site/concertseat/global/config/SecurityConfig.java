@@ -25,6 +25,7 @@ import java.util.List;
 
 import static org.springframework.http.HttpMethod.DELETE;
 import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.security.config.http.SessionCreationPolicy.IF_REQUIRED;
 
 @Configuration
 @EnableWebSecurity
@@ -60,6 +61,9 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer
                         .configurationSource(corsConfigurationSource())
+                )
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(IF_REQUIRED)
                 )
                 .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
